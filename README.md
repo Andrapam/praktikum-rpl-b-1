@@ -1,5 +1,6 @@
 # praktikum-rpl-01
-
+                                                            
+![Banner](./Banner.svg)
 # [Fishing Spot Sharing Sistem]
 Deskripsi singkat proyek:Sebuah Aplikasi untuk membantu para pemacing _(angler)_ mencari spot memancing sesuai kebutuhan mereka
 
