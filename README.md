@@ -6,10 +6,10 @@ Sebuah aplikasi untuk membantu para pemancing (_angler_) mencari dan berbagi spo
 ## Anggota Kelompok
 | Nama                      | NIM      | Peran                 |
 |---------------------------|----------|-----------------------|
-| Andradhi Bondan Pamungkas | L0124147 | Ketua / Project Lead  |
+| Andradhi Bondan Pamungkas | L0124147 | Ketua/Project Lead    |
 | Ataa Arkan Tsany          | L0124148 | Frontend Developer    |
 | Imam Dian Firmansyah      | L0124150 | Backend Developer     |
-| Salman Abdussalam         | L0124156 | QA / Tester           |
+| Salman Abdussalam         | L0124156 | QA/Tester             |
 
 ## Fitur Utama
 1. Pencarian spot memancing berdasarkan lokasi dan preferensi.
