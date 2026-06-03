@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 
 // Dynamic import for Leaflet map (no SSR)
-const MapComponent = dynamic(() => import('../src/components/MapView'), {
+const MapComponent = dynamic(() => import('@/components/MapView'), {
   ssr: false,
   loading: () => (
     <div className="w-full h-full bg-[#0f1923] flex items-center justify-center">

@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Camera, ChevronDown, Crosshair, Navigation, MapPin } from 'lucide-react';
 import { createSpot, isLoggedIn, getUser } from '@/services/api';
 
-const MapPickerView = dynamic(() => import('../../src/components/MapPickerView'), {
+const MapPickerView = dynamic(() => import('@/components/MapPickerView'), {
   ssr: false,
   loading: () => (
     <div className="w-full h-full flex items-center justify-center bg-[#0d1b2a]">
