@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Users
+        // 1. Users (5 users total)
         DB::table('users')->insert([
             [
                 'username' => 'admin_ataa',
@@ -36,6 +36,22 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('citra123'),
                 'role' => 'Member',
                 'status' => 'Banned',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'username' => 'diana_mancing',
+                'password' => Hash::make('diana123'),
+                'role' => 'Member',
+                'status' => 'Active',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'username' => 'eko_fisher',
+                'password' => Hash::make('eko123'),
+                'role' => 'Member',
+                'status' => 'Active',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -97,31 +113,92 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        // 4. Reviews
+        // 4. Reviews (each spot has 3+ reviews, some with censored bad words)
         DB::table('review')->insert([
+            // ── Spot 1: Pemancingan Luka Cathil ──
             [
                 'spotId' => 1,
                 'userId' => 3,
                 'rating' => 5,
                 'reviewText' => 'Tempat pemancingan yang sangat indah dan nyaman, pelayannya juga ramah. pokoknya mantap buat pemancingan ini',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => now()->subDays(10),
+                'updated_at' => now()->subDays(10),
             ],
+            [
+                'spotId' => 1,
+                'userId' => 4,
+                'rating' => 4,
+                'reviewText' => 'Mantap *****, tempatnya keren banget! Ikannya gede-gede, pasti balik lagi deh.',
+                'created_at' => now()->subDays(7),
+                'updated_at' => now()->subDays(7),
+            ],
+            [
+                'spotId' => 1,
+                'userId' => 5,
+                'rating' => 5,
+                'reviewText' => 'Baru pertama kali mancing di sini dan langsung dapat ikan kakap besar. Fasilitas lengkap, parkiran luas.',
+                'created_at' => now()->subDays(3),
+                'updated_at' => now()->subDays(3),
+            ],
+
+            // ── Spot 2: Pemancingan Sibayak Triyagan ──
             [
                 'spotId' => 2,
                 'userId' => 2,
                 'rating' => 4,
                 'reviewText' => 'Asik buat nyantai, tapi kalau akhir pekan agak terlalu ramai.',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => now()->subDays(14),
+                'updated_at' => now()->subDays(14),
             ],
+            [
+                'spotId' => 2,
+                'userId' => 4,
+                'rating' => 3,
+                'reviewText' => 'Spot ini ****** bagus sih, tapi sayang toilet kurang bersih. Harap diperbaiki ya pengelola.',
+                'created_at' => now()->subDays(8),
+                'updated_at' => now()->subDays(8),
+            ],
+            [
+                'spotId' => 2,
+                'userId' => 5,
+                'rating' => 5,
+                'reviewText' => 'Lokasi strategis banget, deket dari kota. Lele-nya banyak dan gampang dapat. Recommended!',
+                'created_at' => now()->subDays(2),
+                'updated_at' => now()->subDays(2),
+            ],
+            [
+                'spotId' => 2,
+                'userId' => 3,
+                'rating' => 4,
+                'reviewText' => 'Tempatnya teduh dan adem, cocok buat mancing santai bareng keluarga.',
+                'created_at' => now()->subDays(1),
+                'updated_at' => now()->subDays(1),
+            ],
+
+            // ── Spot 3: Jinemtu fishing ──
             [
                 'spotId' => 3,
                 'userId' => 2,
                 'rating' => 5,
                 'reviewText' => 'Spot mancing yang mantul tul tul saya baru pertama mancing. Dan ketagihan pengen kesini lagi.',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => now()->subDays(12),
+                'updated_at' => now()->subDays(12),
+            ],
+            [
+                'spotId' => 3,
+                'userId' => 4,
+                'rating' => 4,
+                'reviewText' => 'Free wifi itu yang bikin betah, bisa sambil nonton YouTube. Ikan juga lumayan banyak.',
+                'created_at' => now()->subDays(5),
+                'updated_at' => now()->subDays(5),
+            ],
+            [
+                'spotId' => 3,
+                'userId' => 5,
+                'rating' => 3,
+                'reviewText' => 'Wah *** banget harganya naik terus, tapi emang tempatnya enak sih. Ikannya fresh dan besar-besar.',
+                'created_at' => now()->subDays(1),
+                'updated_at' => now()->subDays(1),
             ],
         ]);
     }

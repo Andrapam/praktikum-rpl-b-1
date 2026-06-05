@@ -63,10 +63,12 @@ export async function createSpot(formData) {
 }
 
 export async function createReview(spotId, rating, reviewText) {
+  const user = getUser();
+  const userId = user?.id;
   const res = await fetch(`${API_BASE}/reviews`, {
     method: 'POST',
     headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
-    body: JSON.stringify({ spotId, rating, reviewText }),
+    body: JSON.stringify({ spotId, userId, rating, reviewText }),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Gagal menyimpan review');
@@ -130,6 +132,24 @@ export async function fetchAllUsers() {
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Gagal memuat pengguna');
+  return data;
+}
+
+export async function fetchAdminStats() {
+  const res = await fetch(`${API_BASE}/admin/stats`, {
+    headers: getAuthHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Gagal memuat statistik');
+  return data;
+}
+
+export async function fetchAdminReviews() {
+  const res = await fetch(`${API_BASE}/admin/reviews`, {
+    headers: getAuthHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Gagal memuat ulasan');
   return data;
 }
 

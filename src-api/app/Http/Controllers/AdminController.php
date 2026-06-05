@@ -9,6 +9,26 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+    /**
+     * Get dashboard statistics.
+     */
+    public function stats()
+    {
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'total_users' => User::count(),
+                'active_users' => User::where('status', 'Active')->count(),
+                'banned_users' => User::where('status', 'Banned')->count(),
+                'total_spots' => Spot::count(),
+                'total_reviews' => Review::count(),
+            ],
+        ]);
+    }
+
+    /**
+     * Get all users with spot/review counts.
+     */
     public function users()
     {
         $users = User::withCount(['spots', 'reviews'])->get();
@@ -18,6 +38,21 @@ class AdminController extends Controller
         ]);
     }
 
+    /**
+     * Get ALL reviews with spot and user relations.
+     */
+    public function reviews()
+    {
+        $reviews = Review::with(['spot', 'user'])->orderBy('created_at', 'desc')->get();
+        return response()->json([
+            'success' => true,
+            'data' => $reviews,
+        ]);
+    }
+
+    /**
+     * Ban or unban a user.
+     */
     public function updateUserStatus(Request $request, $id)
     {
         $request->validate([

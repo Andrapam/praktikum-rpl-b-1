@@ -8,7 +8,32 @@ use Illuminate\Http\Request;
 class ReviewController extends Controller
 {
     /**
-     * Create a new review.
+     * List of Indonesian bad words to censor.
+     */
+    private $badWords = [
+        'anjing', 'bangsat', 'bego', 'tolol', 'goblok', 'bodoh',
+        'kampret', 'brengsek', 'sialan', 'bajingan', 'kontol',
+        'memek', 'ngentot', 'tai', 'setan', 'iblis', 'keparat',
+        'laknat', 'anjir', 'asu', 'babi', 'monyet', 'goblog',
+        'idiot', 'dungu', 'perek', 'jablay',
+    ];
+
+    /**
+     * Censor bad words in text by replacing with asterisks.
+     */
+    private function censorBadWords(string $text): string
+    {
+        foreach ($this->badWords as $word) {
+            $pattern = '/\b' . preg_quote($word, '/') . '\b/iu';
+            $text = preg_replace_callback($pattern, function ($match) {
+                return str_repeat('*', mb_strlen($match[0]));
+            }, $text);
+        }
+        return $text;
+    }
+
+    /**
+     * Create a new review with word censoring.
      */
     public function store(Request $request)
     {
@@ -19,10 +44,14 @@ class ReviewController extends Controller
             'reviewText' => 'nullable|string',
         ]);
 
-        $review = Review::create($request->only([
-            'spotId', 'userId', 'rating', 'reviewText',
-        ]));
+        $data = $request->only(['spotId', 'userId', 'rating', 'reviewText']);
 
+        // Apply bad word censoring
+        if (!empty($data['reviewText'])) {
+            $data['reviewText'] = $this->censorBadWords($data['reviewText']);
+        }
+
+        $review = Review::create($data);
         $review->load('user', 'spot');
 
         return response()->json([
@@ -32,6 +61,9 @@ class ReviewController extends Controller
         ], 201);
     }
 
+    /**
+     * Delete a review.
+     */
     public function destroy($id)
     {
         $review = Review::find($id);
