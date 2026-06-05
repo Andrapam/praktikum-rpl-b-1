@@ -13,7 +13,7 @@ class SpotController extends Controller
      */
     public function index()
     {
-        $spots = Spot::with(['photos', 'user'])
+        $spots = Spot::with(['photos', 'user', 'reviews.user'])
             ->withCount('reviews')
             ->withAvg('reviews', 'rating')
             ->get();
@@ -95,5 +95,26 @@ class SpotController extends Controller
             'message' => 'Spot berhasil ditambahkan.',
             'data' => $spot,
         ], 201);
+    }
+
+    public function destroy($id)
+    {
+        $spot = Spot::find($id);
+        if (!$spot) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Spot tidak ditemukan.',
+            ], 404);
+        }
+
+        // Delete photos associated with spot
+        SpotPhoto::where('spotId', $id)->delete();
+        
+        $spot->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Spot berhasil dihapus.',
+        ]);
     }
 }

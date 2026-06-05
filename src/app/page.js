@@ -198,13 +198,23 @@ export default function BerandaPage() {
           >
             <Plus className="w-4 h-4" />
           </Link>
-          {/* Avatar */}
-          <Link
-            href={currentUser ? '#' : '/login'}
-            className="w-9 h-9 rounded-full bg-emerald-700 text-white flex items-center justify-center font-semibold text-sm cursor-pointer hover:bg-emerald-600 transition-colors"
-          >
-            {currentUser ? currentUser.username.substring(0, 2).toUpperCase() : 'AB'}
-          </Link>
+          {/* Avatar / Profile Link */}
+          {currentUser ? (
+            <Link
+              href="/profile"
+              title={`Profil: ${currentUser.username}`}
+              className="w-9 h-9 rounded-full bg-emerald-700 text-white flex items-center justify-center font-semibold text-sm cursor-pointer hover:bg-emerald-600 transition-colors ring-2 ring-emerald-500/30 hover:ring-emerald-500"
+            >
+              {currentUser.username.substring(0, 2).toUpperCase()}
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white bg-[#1a2332] hover:bg-[#243447] border border-[#1e3a5f] px-3 py-2 rounded-xl transition-colors"
+            >
+              Masuk
+            </Link>
+          )}
         </div>
       </nav>
 
@@ -279,6 +289,13 @@ export default function BerandaPage() {
                     <span className="text-emerald-400 font-bold text-sm">{spot.rating}</span>
                     <span className="text-gray-500 text-xs">({spot.reviewCount} ulasan)</span>
                   </div>
+                  {selectedSpot === spot.id && (
+                    <div className="mt-3 pt-3 border-t border-[#1e3a5f]/50">
+                      <Link href={`/spots/${spot.id}`} className="w-full inline-flex items-center justify-center gap-1.5 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-500/30 py-2 rounded-lg text-xs font-medium transition-all">
+                        Lihat Detail Penuh
+                      </Link>
+                    </div>
+                  )}
                 </div>
               ))
             )}
@@ -395,6 +412,13 @@ export default function BerandaPage() {
                   <span className="text-emerald-400 font-bold text-sm">{spot.rating}</span>
                   <span className="text-gray-500 text-xs">({spot.reviewCount} ulasan)</span>
                 </div>
+                {selectedSpot === spot.id && (
+                  <div className="mt-3 pt-3 border-t border-[#1e3a5f]/50">
+                    <Link href={`/spots/${spot.id}`} className="w-full inline-flex items-center justify-center gap-1.5 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-500/30 py-2 rounded-lg text-xs font-medium transition-all">
+                      Lihat Detail Penuh
+                    </Link>
+                  </div>
+                )}
               </div>
             ))
           )}

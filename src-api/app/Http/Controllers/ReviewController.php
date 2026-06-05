@@ -31,4 +31,22 @@ class ReviewController extends Controller
             'data' => $review,
         ], 201);
     }
+
+    public function destroy($id)
+    {
+        $review = Review::find($id);
+        if (!$review) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ulasan tidak ditemukan.',
+            ], 404);
+        }
+
+        $review->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Ulasan berhasil dihapus.',
+        ]);
+    }
 }

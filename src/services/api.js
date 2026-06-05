@@ -94,3 +94,52 @@ export function logout() {
 export function isLoggedIn() {
   return !!getUser();
 }
+
+export async function fetchUserProfile(userId) {
+  const res = await fetch(`${API_BASE}/users/${userId}/profile`, {
+    headers: getAuthHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Gagal memuat profil');
+  return data;
+}
+
+export async function deleteSpot(spotId) {
+  const res = await fetch(`${API_BASE}/spots/${spotId}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Gagal menghapus spot');
+  return data;
+}
+
+export async function deleteReview(reviewId) {
+  const res = await fetch(`${API_BASE}/reviews/${reviewId}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Gagal menghapus ulasan');
+  return data;
+}
+
+export async function fetchAllUsers() {
+  const res = await fetch(`${API_BASE}/admin/users`, {
+    headers: getAuthHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Gagal memuat pengguna');
+  return data;
+}
+
+export async function updateUserStatus(userId, status) {
+  const res = await fetch(`${API_BASE}/admin/users/${userId}/status`, {
+    method: 'PUT',
+    headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Gagal mengubah status');
+  return data;
+}
