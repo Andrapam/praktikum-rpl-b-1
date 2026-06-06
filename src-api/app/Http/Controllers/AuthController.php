@@ -23,14 +23,14 @@ class AuthController extends Controller
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Username atau password salah.',
+                'message' => 'Username atau password tidak valid.',
             ], 401);
         }
 
         if ($user->status === 'Banned') {
             return response()->json([
                 'success' => false,
-                'message' => 'Akun Anda telah dibanned.',
+                'message' => 'Akun Anda telah dinonaktifkan.',
             ], 403);
         }
 

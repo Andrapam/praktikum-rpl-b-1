@@ -2,12 +2,25 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { 
   ArrowLeft, MapPin, Droplets, Star, User, 
-  ChevronLeft, ChevronRight, Send, Fish, Calendar
+  ChevronLeft, ChevronRight, Send, Fish, Calendar, Pencil
 } from 'lucide-react';
-import { fetchSpotById, createReview, isLoggedIn, getUser } from '@/services/api';
+import { fetchSpotById, createReview, updateReview, isLoggedIn, getUser } from '@/services/api';
+
+const MapPickerView = dynamic(() => import('@/components/MapPickerView'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[250px] rounded-2xl flex items-center justify-center" style={{ background: 'rgba(10,22,40,0.8)' }}>
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-2 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
+        <span className="text-xs text-gray-400">Memuat peta...</span>
+      </div>
+    </div>
+  ),
+});
 
 export default function SpotDetailPage() {
   const params = useParams();
@@ -26,6 +39,9 @@ export default function SpotDetailPage() {
   const [userLogged, setUserLogged] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [hoverRating, setHoverRating] = useState(0);
+
+  const [editingReviewId, setEditingReviewId] = useState(null);
+  const [editingReviewText, setEditingReviewText] = useState('');
 
   useEffect(() => {
     setUserLogged(isLoggedIn());
@@ -74,6 +90,18 @@ export default function SpotDetailPage() {
     }
   };
 
+  const handleUpdateReview = async (reviewId) => {
+    if (!editingReviewText.trim()) return;
+    try {
+      await updateReview(reviewId, editingReviewText);
+      setEditingReviewId(null);
+      setEditingReviewText('');
+      loadSpot();
+    } catch (err) {
+      alert(err.message || 'Gagal menyensor ulasan.');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#060d1a' }}>
@@ -107,6 +135,9 @@ export default function SpotDetailPage() {
   const defaultPhoto = 'https://images.unsplash.com/photo-1508249685960-93a9582d90a6?q=80&w=2000&auto=format&fit=crop';
   const activeImage = photos.length > 0 ? photos[activePhotoIndex].imageUrl : defaultPhoto;
   const avgRating = parseFloat(spot.reviews_avg_rating || 0).toFixed(1);
+  const existingUserReview = currentUser
+    ? spot.reviews?.find((review) => review.userId === currentUser.id)
+    : null;
 
   const typeColors = {
     'Air Tawar': { bg: 'rgba(59,130,246,0.12)', color: '#60a5fa', border: 'rgba(59,130,246,0.25)' },
@@ -180,6 +211,15 @@ export default function SpotDetailPage() {
                   {parseFloat(spot.latitude).toFixed(6)}, {parseFloat(spot.longitude).toFixed(6)}
                 </p>
               </div>
+              {/* Edit button for owner */}
+              {currentUser && spot.userId === currentUser.id && (
+                <Link href={`/spots/${spot.id}/edit`}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 self-end"
+                  style={{ background: 'rgba(59,130,246,0.2)', color: '#60a5fa', border: '1px solid rgba(59,130,246,0.3)' }}>
+                  <Pencil className="w-4 h-4" />
+                  Edit Spot
+                </Link>
+              )}
             </div>
           </div>
 
@@ -246,12 +286,12 @@ export default function SpotDetailPage() {
               <div className="grid grid-cols-2 gap-4 mt-8 pt-6" style={{ borderTop: '1px solid rgba(30,58,95,0.5)' }}>
                 <div className="rounded-2xl p-4" style={{ background: 'rgba(10,22,40,0.8)', border: '1px solid rgba(30,58,95,0.3)' }}>
                   <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#374d6b' }}>Kontributor</p>
-                  <p className="flex items-center gap-2 font-semibold text-sm">
+                  <div className="flex items-center gap-2 font-semibold text-sm">
                     <div className="w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-bold" style={{ background: 'rgba(16,185,129,0.15)', color: '#34d399', border: '1px solid rgba(16,185,129,0.2)' }}>
                       {(spot.user?.username || 'A').substring(0,1).toUpperCase()}
                     </div>
                     {spot.user?.username || 'Anonim'}
-                  </p>
+                  </div>
                 </div>
                 <div className="rounded-2xl p-4" style={{ background: 'rgba(10,22,40,0.8)', border: '1px solid rgba(30,58,95,0.3)' }}>
                   <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#374d6b' }}>Koordinat</p>
@@ -259,6 +299,20 @@ export default function SpotDetailPage() {
                     {parseFloat(spot.latitude).toFixed(6)}<br/>
                     {parseFloat(spot.longitude).toFixed(6)}
                   </p>
+                </div>
+              </div>
+
+              {/* Embedded Map */}
+              <div className="mt-8 pt-6" style={{ borderTop: '1px solid rgba(30,58,95,0.5)' }}>
+                <h3 className="text-sm font-bold mb-4 flex items-center gap-2" style={{ color: '#e2e8f0' }}>
+                  <MapPin className="w-4 h-4 text-emerald-400" />
+                  Lokasi di Peta
+                </h3>
+                <div className="w-full h-[250px] rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(30,58,95,0.3)' }}>
+                  <MapPickerView 
+                    position={{ lat: parseFloat(spot.latitude), lng: parseFloat(spot.longitude) }} 
+                    onPositionChange={() => {}} 
+                  />
                 </div>
               </div>
             </div>
@@ -282,6 +336,19 @@ export default function SpotDetailPage() {
               {/* Review Form */}
               <div className="px-5 py-5" style={{ borderBottom: '1px solid rgba(30,58,95,0.4)' }}>
                 {userLogged ? (
+                  existingUserReview ? (
+                    <div className="text-center py-2">
+                      <p className="text-xs mb-2" style={{ color: '#94a3b8' }}>
+                        Anda sudah memberikan ulasan untuk spot ini.
+                      </p>
+                      <div className="flex items-center justify-center gap-0.5 mb-2">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star key={star} className={`w-4 h-4 ${star <= existingUserReview.rating ? 'text-amber-400 fill-amber-400' : 'text-gray-700'}`} />
+                        ))}
+                      </div>
+                      <p className="text-xs" style={{ color: '#4b7294' }}>{existingUserReview.reviewText}</p>
+                    </div>
+                  ) : (
                   <>
                     {reviewSuccess && (
                       <div className="mb-3 px-3 py-2 rounded-xl text-xs font-semibold" style={{ background: 'rgba(16,185,129,0.1)', color: '#34d399', border: '1px solid rgba(16,185,129,0.2)' }}>
@@ -321,6 +388,7 @@ export default function SpotDetailPage() {
                       </button>
                     </form>
                   </>
+                  )
                 ) : (
                   <div className="text-center py-2">
                     <p className="text-xs mb-3" style={{ color: '#4b7294' }}>Masuk untuk menulis ulasan</p>
@@ -352,12 +420,38 @@ export default function SpotDetailPage() {
                           </div>
                         </div>
                         <div className="flex items-center gap-0.5">
+                          {currentUser?.role === 'Admin' && (
+                            <button 
+                              onClick={() => {
+                                setEditingReviewId(review.id);
+                                setEditingReviewText(review.reviewText);
+                              }}
+                              className="mr-2 text-[10px] bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded transition-colors hover:bg-red-500/20"
+                            >
+                              Sensor
+                            </button>
+                          )}
                           {[1,2,3,4,5].map(s => (
                             <Star key={s} className={`w-3 h-3 ${s <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-700'}`} />
                           ))}
                         </div>
                       </div>
-                      <p className="text-xs leading-relaxed" style={{ color: '#94a3b8' }}>{review.reviewText}</p>
+                      {editingReviewId === review.id ? (
+                        <div className="mt-2">
+                          <textarea
+                            value={editingReviewText}
+                            onChange={e => setEditingReviewText(e.target.value)}
+                            className="w-full text-xs rounded p-2 mb-2 outline-none"
+                            style={{ background: 'rgba(10,22,40,0.8)', border: '1px solid rgba(16,185,129,0.5)', color: '#e2e8f0' }}
+                          />
+                          <div className="flex gap-2">
+                            <button onClick={() => handleUpdateReview(review.id)} className="text-[10px] bg-emerald-500 text-white px-3 py-1 rounded hover:bg-emerald-600">Simpan</button>
+                            <button onClick={() => setEditingReviewId(null)} className="text-[10px] bg-gray-700 text-white px-3 py-1 rounded hover:bg-gray-600">Batal</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-xs leading-relaxed" style={{ color: '#94a3b8' }}>{review.reviewText}</p>
+                      )}
                     </div>
                   ))
                 ) : (

@@ -86,8 +86,13 @@ export default function TambahSpotPage() {
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        setError('Ukuran foto maksimal 2MB.');
+        return;
+      }
       setSelectedFile(file.name);
       setSelectedFileObj(file);
+      setError('');
     }
   };
 
@@ -99,12 +104,18 @@ export default function TambahSpotPage() {
     }
     setLoading(true);
     try {
+      let description = formData.description || '';
+      if (formData.targetFish.trim()) {
+        description = description
+          ? `${description}\n\nTarget ikan: ${formData.targetFish.trim()}`
+          : `Target ikan: ${formData.targetFish.trim()}`;
+      }
+
       const fd = new FormData();
-      fd.append('userId', currentUser?.id);
       fd.append('name', formData.name);
       fd.append('latitude', formData.lat);
       fd.append('longitude', formData.lng);
-      fd.append('description', formData.description);
+      fd.append('description', description);
       fd.append('jenis_air', formData.waterType);
       if (selectedFileObj) {
         fd.append('photos[]', selectedFileObj);
@@ -313,7 +324,7 @@ export default function TambahSpotPage() {
                   <span className="text-sm text-gray-500 group-hover:text-gray-400 transition-colors">
                     Ketuk untuk pilih foto
                   </span>
-                  <span className="text-xs text-gray-600">PNG, JPG hingga 5MB</span>
+                  <span className="text-xs text-gray-600">PNG, JPG maks. 2MB</span>
                 </div>
               )}
               <input

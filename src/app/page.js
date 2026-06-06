@@ -30,16 +30,6 @@ const MapComponent = dynamic(() => import('@/components/MapView'), {
   ),
 });
 
-// ── Data awal cuy ──────────────────────────────────────────────────────────────────
-const MOCK_SPOTS = [
-  { id: 1, name: 'Waduk Cengklik Spot A', type: 'Air Tawar', lat: -7.467, lng: 110.752, rating: 4.5, reviewCount: 12, distance: 2.5, description: 'Spot waduk dengan ikan nila dan mujair berlimpah' },
-  { id: 2, name: 'Spot Wader Kali Pepe', type: 'Sungai', lat: -7.545, lng: 110.808, rating: 4.2, reviewCount: 7, distance: 4.1, description: 'Kali dengan arus tenang, cocok untuk wader' },
-  { id: 3, name: 'Spot Gabus Nglongkeh', type: 'Sungai', lat: -7.52, lng: 110.88, rating: 4.0, reviewCount: 5, distance: 6.3, description: 'Spot gabus terkenal di area Nglongkeh' },
-  { id: 4, name: 'Spot Hampala Pak Salman', type: 'Waduk', lat: -7.50, lng: 110.78, rating: 3.9, reviewCount: 4, distance: 8.7, description: 'Waduk dengan hampala besar-besar' },
-  { id: 5, name: 'Spot Kairul Sungai Bening', type: 'Sungai', lat: -7.59, lng: 110.90, rating: 3.8, reviewCount: 3, distance: 10.2, description: 'Sungai bening dengan kairul aktif' },
-  { id: 6, name: 'Spot Gabus Nglongkeh', type: 'Sungai', lat: -7.58, lng: 110.85, rating: 4.0, reviewCount: 5, distance: 6.3, description: 'Spot tambahan area Nglongkeh' },
-];
-
 const FILTER_OPTIONS = ['Semua', 'Air Tawar', 'Air Laut', 'Sungai', 'Waduk'];
 
 // ── Helper: type badge colors ──────────────────────────────────────────────────
@@ -73,7 +63,7 @@ function StarRating({ rating }) {
 
 // ── Main Page Component ────────────────────────────────────────────────────────
 export default function BerandaPage() {
-  const [spots, setSpots] = useState(MOCK_SPOTS);
+  const [spots, setSpots] = useState([]);
   const [spotsLoading, setSpotsLoading] = useState(true);
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [activeFilter, setActiveFilter] = useState('Semua');
@@ -103,10 +93,10 @@ export default function BerandaPage() {
           photos: spot.photos || [],
           user: spot.user || null,
         }));
-        if (mapped.length > 0) setSpots(mapped);
+        setSpots(mapped);
       })
       .catch(() => {
-        // Keep MOCK_SPOTS as fallback
+        setSpots([]);
       })
       .finally(() => setSpotsLoading(false));
   }, []);
@@ -184,16 +174,26 @@ export default function BerandaPage() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-3 shrink-0">
-          <Link
-            href="/tambah-spot"
-            className="hidden sm:flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl px-4 py-2.5 font-medium text-sm transition-all hover:shadow-lg hover:shadow-emerald-500/20"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Tambah Spot</span>
-          </Link>
+          {currentUser ? (
+            <Link
+              href="/tambah-spot"
+              className="hidden sm:flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl px-4 py-2.5 font-medium text-sm transition-all hover:shadow-lg hover:shadow-emerald-500/20"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Tambah Spot</span>
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="hidden sm:flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl px-4 py-2.5 font-medium text-sm transition-all hover:shadow-lg hover:shadow-emerald-500/20"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Tambah Spot</span>
+            </Link>
+          )}
           {/* Mobile-only add button */}
           <Link
-            href="/tambah-spot"
+            href={currentUser ? '/tambah-spot' : '/login'}
             className="sm:hidden flex items-center justify-center w-9 h-9 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl transition-all"
           >
             <Plus className="w-4 h-4" />

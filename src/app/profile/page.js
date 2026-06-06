@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   User, MapPin, Star, Trash2, LogOut, ArrowLeft,
-  ShieldCheck, LayoutDashboard, Fish, Plus
+  ShieldCheck, LayoutDashboard, Fish, Plus, Pencil
 } from 'lucide-react';
 import { 
   getUser, logout, fetchUserProfile, deleteSpot, deleteReview 
@@ -230,14 +230,24 @@ export default function ProfilePage() {
                       <span className="text-xs" style={{ color: '#374d6b' }}>
                         {new Date(spot.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </span>
-                      <button onClick={() => handleDeleteSpot(spot.id)}
-                        className="p-1.5 rounded-lg transition-all duration-200 hover:scale-110"
-                        style={{ color: '#4b7294' }}
-                        onMouseEnter={e => { e.currentTarget.style.color = '#f87171'; e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.color = '#4b7294'; e.currentTarget.style.background = 'transparent'; }}
-                        title="Hapus Spot">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <Link href={`/spots/${spot.id}/edit`}
+                          className="p-1.5 rounded-lg transition-all duration-200 hover:scale-110"
+                          style={{ color: '#4b7294' }}
+                          onMouseEnter={e => { e.currentTarget.style.color = '#60a5fa'; e.currentTarget.style.background = 'rgba(59,130,246,0.1)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.color = '#4b7294'; e.currentTarget.style.background = 'transparent'; }}
+                          title="Edit Spot">
+                          <Pencil className="w-4 h-4" />
+                        </Link>
+                        <button onClick={() => handleDeleteSpot(spot.id)}
+                          className="p-1.5 rounded-lg transition-all duration-200 hover:scale-110"
+                          style={{ color: '#4b7294' }}
+                          onMouseEnter={e => { e.currentTarget.style.color = '#f87171'; e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.color = '#4b7294'; e.currentTarget.style.background = 'transparent'; }}
+                          title="Hapus Spot">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

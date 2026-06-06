@@ -9,11 +9,25 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+    private function ensureAdminAccess(Request $request)
+    {
+        $user = $this->authUser($request);
+        if (!$this->isAdmin($user)) {
+            abort(response()->json([
+                'success' => false,
+                'message' => 'Akses ditolak. Hanya admin yang dapat mengakses.',
+            ], 403));
+        }
+        return $user;
+    }
+
     /**
      * Get dashboard statistics.
      */
-    public function stats()
+    public function stats(Request $request)
     {
+        $this->ensureAdminAccess($request);
+
         return response()->json([
             'success' => true,
             'data' => [
@@ -29,8 +43,10 @@ class AdminController extends Controller
     /**
      * Get all users with spot/review counts.
      */
-    public function users()
+    public function users(Request $request)
     {
+        $this->ensureAdminAccess($request);
+
         $users = User::withCount(['spots', 'reviews'])->get();
         return response()->json([
             'success' => true,
@@ -39,14 +55,27 @@ class AdminController extends Controller
     }
 
     /**
-     * Get ALL reviews with spot and user relations.
+     * Get reviews with spot and user relations (paginated).
      */
-    public function reviews()
+    public function reviews(Request $request)
     {
-        $reviews = Review::with(['spot', 'user'])->orderBy('created_at', 'desc')->get();
+        $this->ensureAdminAccess($request);
+
+        $perPage = min(max((int) $request->get('perPage', 50), 1), 100);
+
+        $reviews = Review::with(['spot', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+
         return response()->json([
             'success' => true,
-            'data' => $reviews,
+            'data' => $reviews->items(),
+            'meta' => [
+                'current_page' => $reviews->currentPage(),
+                'last_page' => $reviews->lastPage(),
+                'per_page' => $reviews->perPage(),
+                'total' => $reviews->total(),
+            ],
         ]);
     }
 
@@ -55,6 +84,8 @@ class AdminController extends Controller
      */
     public function updateUserStatus(Request $request, $id)
     {
+        $this->ensureAdminAccess($request);
+
         $request->validate([
             'status' => 'required|in:Active,Banned',
         ]);

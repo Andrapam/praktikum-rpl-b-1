@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   Users, MapPin, Star, ShieldAlert,
-  Trash2, Ban, CheckCircle, ArrowLeft, Fish
+  Trash2, Ban, CheckCircle, ArrowLeft, Fish, Image as ImageIcon
 } from 'lucide-react';
 import { 
   getUser, fetchAllUsers, updateUserStatus, fetchSpots, deleteSpot, deleteReview,
-  fetchAdminStats, fetchAdminReviews
+  fetchAdminStats, fetchAdminReviews, deletePhoto
 } from '@/services/api';
 
 export default function AdminDashboard() {
@@ -18,8 +18,10 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [spots, setSpots] = useState([]);
   const [allReviewsData, setAllReviewsData] = useState([]);
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('users');
+  const [deletingPhotoId, setDeletingPhotoId] = useState(null);
 
   useEffect(() => {
     const user = getUser();
@@ -34,14 +36,16 @@ export default function AdminDashboard() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [usersRes, spotsRes, reviewsRes] = await Promise.all([
+      const [usersRes, spotsRes, reviewsRes, statsRes] = await Promise.all([
         fetchAllUsers(),
         fetchSpots(),
-        fetchAdminReviews()
+        fetchAdminReviews(),
+        fetchAdminStats(),
       ]);
       setUsers(usersRes.data || []);
       setSpots(spotsRes.data || []);
       setAllReviewsData(reviewsRes.data || []);
+      setStats(statsRes.data || null);
     } catch (err) {
       console.error('Admin loadData error:', err);
       // Try loading individually so partial data can still show
@@ -71,12 +75,25 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteSpot = async (spot) => {
-    if (!confirm(`Yakin ingin MENGHAPUS spot "${spot.name}" secara permanen dari sistem?`)) return;
+    if (!window.confirm(`Yakin ingin menghapus spot "${spot.name}"?`)) return;
     try {
       await deleteSpot(spot.id);
       loadData();
     } catch (err) {
       alert(err.message || 'Gagal menghapus spot');
+    }
+  };
+
+  const handleDeletePhoto = async (photoId) => {
+    if (!window.confirm('Yakin ingin menghapus foto ini?')) return;
+    setDeletingPhotoId(photoId);
+    try {
+      await deletePhoto(photoId);
+      loadData();
+    } catch (err) {
+      alert(err.message || 'Gagal menghapus foto');
+    } finally {
+      setDeletingPhotoId(null);
     }
   };
 
@@ -106,7 +123,7 @@ export default function AdminDashboard() {
     spotName: review.spot?.name || 'Spot tidak diketahui',
   }));
 
-  const bannedCount = users.filter(u => u.status === 'Banned').length;
+  const bannedCount = stats?.banned_users ?? users.filter(u => u.status === 'Banned').length;
 
   const TABS = [
     { id: 'users',   label: 'Pengguna',  count: users.length,      color: '#818cf8', activeBg: 'linear-gradient(135deg, #4f46e5, #818cf8)' },
@@ -151,10 +168,10 @@ export default function AdminDashboard() {
         {/* ── Stats Cards ── */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'Total Pengguna', value: users.length, icon: Users, color: '#818cf8', glow: 'rgba(99,102,241,0.15)' },
-            { label: 'User Aktif',     value: users.filter(u => u.status === 'Active').length, icon: CheckCircle, color: '#34d399', glow: 'rgba(16,185,129,0.15)' },
+            { label: 'Total Pengguna', value: stats?.total_users ?? users.length, icon: Users, color: '#818cf8', glow: 'rgba(99,102,241,0.15)' },
+            { label: 'User Aktif',     value: stats?.active_users ?? users.filter(u => u.status === 'Active').length, icon: CheckCircle, color: '#34d399', glow: 'rgba(16,185,129,0.15)' },
             { label: 'User Diblokir', value: bannedCount, icon: Ban, color: '#f87171', glow: 'rgba(239,68,68,0.15)' },
-            { label: 'Total Spot',    value: spots.length, icon: MapPin, color: '#fbbf24', glow: 'rgba(245,158,11,0.15)' },
+            { label: 'Total Spot',    value: stats?.total_spots ?? spots.length, icon: MapPin, color: '#fbbf24', glow: 'rgba(245,158,11,0.15)' },
           ].map(stat => (
             <div key={stat.label} className="rounded-2xl p-5 transition-all duration-300 hover:-translate-y-0.5"
               style={{ background: '#0f1f3d', border: '1px solid rgba(30,58,95,0.5)' }}>
@@ -278,6 +295,25 @@ export default function AdminDashboard() {
                       <td className="px-6 py-4 max-w-[220px]">
                         <Link href={`/spots/${spot.id}`} className="font-semibold hover:text-emerald-400 transition-colors truncate block"
                           title={spot.name}>{spot.name}</Link>
+                        
+                        {/* Photos Management */}
+                        {spot.photos && spot.photos.length > 0 && (
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {spot.photos.map(photo => (
+                              <div key={photo.id} className="relative group w-12 h-12 rounded-lg overflow-hidden border border-[#1e3a5f]">
+                                <img src={photo.imageUrl} alt="Foto spot" className="w-full h-full object-cover" />
+                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                  <button onClick={() => handleDeletePhoto(photo.id)}
+                                    disabled={deletingPhotoId === photo.id}
+                                    className="p-1 hover:text-red-400 text-white transition-colors disabled:opacity-50"
+                                    title="Hapus Foto">
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </td>
                       <td className="px-6 py-4">
                         <span className="px-2.5 py-1 rounded-lg text-xs font-semibold" style={{ background: 'rgba(16,185,129,0.1)', color: '#34d399', border: '1px solid rgba(16,185,129,0.2)' }}>

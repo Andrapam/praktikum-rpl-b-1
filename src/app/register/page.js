@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { User, AtSign, Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
-import { apiRegister, saveAuth } from '@/services/api';
+import { apiRegister } from '@/services/api';
 
 function FishLogo() {
   return (
@@ -60,15 +60,18 @@ export default function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    if (!agreeTerms) {
+      setError('Anda harus menyetujui Syarat & Ketentuan terlebih dahulu.');
+      return;
+    }
     if (formData.password !== formData.confirmPassword) {
       setError('Password dan konfirmasi password tidak cocok.');
       return;
     }
     setLoading(true);
     try {
-      const res = await apiRegister(formData.username, formData.password);
-      saveAuth(res.data.user, res.data.api_token);
-      router.push('/');
+      await apiRegister(formData.username, formData.password);
+      router.push('/login?registered=1');
     } catch (err) {
       setError(err.message || 'Registrasi gagal. Silakan coba lagi.');
     } finally {
@@ -183,6 +186,7 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   placeholder="Masukkan nama lengkap"
                   className={inputClass}
+                  style={{ paddingLeft: '3rem', paddingRight: '1rem' }}
                 />
               </div>
             </div>
@@ -199,6 +203,7 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   placeholder="Pilih username"
                   className={inputClass}
+                  style={{ paddingLeft: '3rem', paddingRight: '1rem' }}
                 />
               </div>
             </div>
@@ -215,6 +220,7 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   placeholder="Masukkan email"
                   className={inputClass}
+                  style={{ paddingLeft: '3rem', paddingRight: '1rem' }}
                 />
               </div>
             </div>
@@ -231,6 +237,7 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   placeholder="Buat password"
                   className={inputWithToggleClass}
+                  style={{ paddingLeft: '3rem', paddingRight: '3rem' }}
                 />
                 <button
                   type="button"
@@ -254,6 +261,7 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   placeholder="Ulangi password"
                   className={inputWithToggleClass}
+                  style={{ paddingLeft: '3rem', paddingRight: '3rem' }}
                 />
                 <button
                   type="button"
