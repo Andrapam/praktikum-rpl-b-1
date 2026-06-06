@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SpotController;
 use App\Http\Controllers\ReviewController;
-
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 
@@ -16,7 +15,9 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::get('/users/{id}/profile', [UserController::class, 'profile']);
 
 // Admin routes
+Route::get('/admin/stats', [AdminController::class, 'stats']);
 Route::get('/admin/users', [AdminController::class, 'users']);
+Route::get('/admin/reviews', [AdminController::class, 'reviews']);
 Route::put('/admin/users/{id}/status', [AdminController::class, 'updateUserStatus']);
 
 // Spot routes

@@ -8,7 +8,8 @@ import {
   Trash2, Ban, CheckCircle, ArrowLeft, Fish
 } from 'lucide-react';
 import { 
-  getUser, fetchAllUsers, updateUserStatus, fetchSpots, deleteSpot, deleteReview 
+  getUser, fetchAllUsers, updateUserStatus, fetchSpots, deleteSpot, deleteReview,
+  fetchAdminStats, fetchAdminReviews
 } from '@/services/api';
 
 export default function AdminDashboard() {
@@ -16,6 +17,7 @@ export default function AdminDashboard() {
   const [currentUser, setCurrentUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [spots, setSpots] = useState([]);
+  const [allReviewsData, setAllReviewsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('users');
 
@@ -32,15 +34,20 @@ export default function AdminDashboard() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [usersRes, spotsRes] = await Promise.all([
+      const [usersRes, spotsRes, reviewsRes] = await Promise.all([
         fetchAllUsers(),
-        fetchSpots()
+        fetchSpots(),
+        fetchAdminReviews()
       ]);
       setUsers(usersRes.data || []);
       setSpots(spotsRes.data || []);
+      setAllReviewsData(reviewsRes.data || []);
     } catch (err) {
-      console.error(err);
-      alert('Gagal memuat data admin.');
+      console.error('Admin loadData error:', err);
+      // Try loading individually so partial data can still show
+      try { const u = await fetchAllUsers(); setUsers(u.data || []); } catch(e) { console.error('Users failed:', e); }
+      try { const s = await fetchSpots(); setSpots(s.data || []); } catch(e) { console.error('Spots failed:', e); }
+      try { const r = await fetchAdminReviews(); setAllReviewsData(r.data || []); } catch(e) { console.error('Reviews failed:', e); }
     } finally {
       setLoading(false);
     }
@@ -94,14 +101,10 @@ export default function AdminDashboard() {
     );
   }
 
-  const allReviews = [];
-  spots.forEach(spot => {
-    if (spot.reviews) {
-      spot.reviews.forEach(review => {
-        allReviews.push({ ...review, spotName: spot.name });
-      });
-    }
-  });
+  const allReviews = allReviewsData.map(review => ({
+    ...review,
+    spotName: review.spot?.name || 'Spot tidak diketahui',
+  }));
 
   const bannedCount = users.filter(u => u.status === 'Banned').length;
 
