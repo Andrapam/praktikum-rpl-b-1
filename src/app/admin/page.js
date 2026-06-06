@@ -166,7 +166,7 @@ export default function AdminDashboard() {
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 relative z-10">
 
         {/* ── Stats Cards ── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {[
             { label: 'Total Pengguna', value: stats?.total_users ?? users.length, icon: Users, color: '#818cf8', glow: 'rgba(99,102,241,0.15)' },
             { label: 'User Aktif',     value: stats?.active_users ?? users.filter(u => u.status === 'Active').length, icon: CheckCircle, color: '#34d399', glow: 'rgba(16,185,129,0.15)' },
@@ -208,8 +208,8 @@ export default function AdminDashboard() {
 
           {/* USERS TAB */}
           {activeTab === 'users' && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto w-full">
+              <table className="w-full min-w-full text-sm text-left">
                 <thead>
                   <tr style={{ background: 'rgba(10,22,40,0.8)', borderBottom: '1px solid rgba(30,58,95,0.5)' }}>
                     {['Username', 'Role', 'Status', 'Spot', 'Ulasan', 'Aksi'].map((h, i) => (
@@ -275,8 +275,8 @@ export default function AdminDashboard() {
 
           {/* SPOTS TAB */}
           {activeTab === 'spots' && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto w-full">
+              <table className="w-full min-w-full text-sm text-left">
                 <thead>
                   <tr style={{ background: 'rgba(10,22,40,0.8)', borderBottom: '1px solid rgba(30,58,95,0.5)' }}>
                     {['#', 'Nama Spot', 'Jenis Air', 'Kontributor', 'Aksi'].map((h, i) => (
@@ -348,8 +348,8 @@ export default function AdminDashboard() {
 
           {/* REVIEWS TAB */}
           {activeTab === 'reviews' && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto w-full">
+              <table className="w-full min-w-full text-sm text-left">
                 <thead>
                   <tr style={{ background: 'rgba(10,22,40,0.8)', borderBottom: '1px solid rgba(30,58,95,0.5)' }}>
                     {['Isi Ulasan', 'Rating', 'Spot', 'Pengguna', 'Aksi'].map((h, i) => (

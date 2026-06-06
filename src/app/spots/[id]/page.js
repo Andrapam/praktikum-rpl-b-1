@@ -40,6 +40,7 @@ export default function SpotDetailPage() {
   const [currentUser, setCurrentUser] = useState(null);
   const [hoverRating, setHoverRating] = useState(0);
 
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editingReviewText, setEditingReviewText] = useState('');
 
@@ -179,189 +180,158 @@ export default function SpotDetailPage() {
 
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 relative z-10">
 
-        {/* ── Hero Gallery ── */}
-        <div className="relative w-full rounded-3xl overflow-hidden mb-6 group" style={{ height: 'clamp(280px, 50vw, 560px)' }}>
-          {/* Background image */}
-          <div className="absolute inset-0 bg-cover bg-center transition-all duration-700 group-hover:scale-105"
-            style={{ backgroundImage: `url(${activeImage})` }} />
-          {/* Gradient overlays */}
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #060d1a 0%, rgba(6,13,26,0.5) 40%, transparent 100%)' }} />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(6,13,26,0.3) 0%, transparent 40%, transparent 60%, rgba(6,13,26,0.3) 100%)' }} />
-
-          {/* Overlay content */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div className="max-w-2xl">
-                {/* Badges */}
-                <div className="flex flex-wrap items-center gap-2 mb-4">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold backdrop-blur-sm"
-                    style={{ background: tColor.bg, color: tColor.color, border: `1px solid ${tColor.border}` }}>
-                    <Droplets className="w-3.5 h-3.5" />
-                    {spot.jenis_air || 'Air Tawar'}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold backdrop-blur-sm"
-                    style={{ background: 'rgba(245,158,11,0.15)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.3)' }}>
-                    <Star className="w-3.5 h-3.5 fill-amber-400" />
-                    {avgRating} · {spot.reviews_count} ulasan
-                  </span>
-                </div>
-                <h1 className="text-3xl md:text-5xl font-black leading-tight mb-3 tracking-tight">{spot.name}</h1>
-                <p className="flex items-center gap-2 text-sm font-medium" style={{ color: '#94a3b8' }}>
-                  <MapPin className="w-4 h-4 text-emerald-400 shrink-0" />
-                  {parseFloat(spot.latitude).toFixed(6)}, {parseFloat(spot.longitude).toFixed(6)}
-                </p>
+        {/* ── Content Grid (Redesign) ── */}
+        <div className="flex flex-col lg:flex-row gap-8">
+          
+          {/* KOLOM KIRI (55%): Info Spot + Ulasan */}
+          <div className="w-full lg:w-[55%] space-y-8">
+            
+            {/* Info Spot Header */}
+            <div>
+              <div className="flex flex-wrap items-center gap-2 mb-4">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold backdrop-blur-sm"
+                  style={{ background: tColor.bg, color: tColor.color, border: `1px solid ${tColor.border}` }}>
+                  <Droplets className="w-3.5 h-3.5" />
+                  {spot.jenis_air || 'Air Tawar'}
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold backdrop-blur-sm"
+                  style={{ background: 'rgba(245,158,11,0.15)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.3)' }}>
+                  <Star className="w-3.5 h-3.5 fill-amber-400" />
+                  {avgRating} · {spot.reviews_count} ulasan
+                </span>
               </div>
-              {/* Edit button for owner */}
-              {currentUser && spot.userId === currentUser.id && (
-                <Link href={`/spots/${spot.id}/edit`}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 self-end"
-                  style={{ background: 'rgba(59,130,246,0.2)', color: '#60a5fa', border: '1px solid rgba(59,130,246,0.3)' }}>
-                  <Pencil className="w-4 h-4" />
-                  Edit Spot
-                </Link>
-              )}
-            </div>
-          </div>
-
-          {/* Carousel arrows */}
-          {photos.length > 1 && (
-            <>
-              <button onClick={prevPhoto}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110"
-                style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button onClick={nextPhoto}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110"
-                style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <ChevronRight className="w-5 h-5" />
-              </button>
-
-              {/* Dot indicators */}
-              <div className="absolute bottom-4 right-6 flex gap-1.5">
-                {photos.map((_, i) => (
-                  <button key={i} onClick={() => setActivePhotoIndex(i)}
-                    className="rounded-full transition-all duration-300"
-                    style={{ width: i === activePhotoIndex ? '20px' : '6px', height: '6px', background: i === activePhotoIndex ? '#10b981' : 'rgba(255,255,255,0.4)' }} />
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* ── Thumbnail Strip ── */}
-        {photos.length > 1 && (
-          <div className="flex gap-3 overflow-x-auto pb-3 mb-8" style={{ scrollbarWidth: 'none' }}>
-            {photos.map((photo, idx) => (
-              <button key={photo.id} onClick={() => setActivePhotoIndex(idx)}
-                className="relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden transition-all duration-200"
-                style={{
-                  border: idx === activePhotoIndex ? '2px solid #10b981' : '2px solid transparent',
-                  opacity: idx === activePhotoIndex ? 1 : 0.55,
-                  transform: idx === activePhotoIndex ? 'scale(1)' : 'scale(0.95)',
-                  boxShadow: idx === activePhotoIndex ? '0 0 0 3px rgba(16,185,129,0.15)' : 'none',
-                }}>
-                <img src={photo.imageUrl} alt="" className="w-full h-full object-cover" />
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* ── Content Grid ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-
-          {/* Left: Description */}
-          <div className="lg:col-span-3 space-y-6">
-            <div className="rounded-3xl p-6 md:p-8" style={{ background: '#0f1f3d', border: '1px solid rgba(30,58,95,0.5)' }}>
-              <h2 className="text-xl font-bold mb-5 flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.25)' }}>
-                  <MapPin className="w-4 h-4 text-emerald-400" />
-                </div>
-                Tentang Spot Ini
-              </h2>
-              <p className="leading-relaxed whitespace-pre-wrap text-sm md:text-base" style={{ color: '#94a3b8' }}>
-                {spot.description || 'Belum ada deskripsi untuk spot ini.'}
+              <h1 className="text-3xl md:text-4xl font-black leading-tight mb-4 tracking-tight">{spot.name}</h1>
+              <p className="flex items-center gap-2 text-sm font-medium mb-6" style={{ color: '#94a3b8' }}>
+                <MapPin className="w-4 h-4 text-emerald-400 shrink-0" />
+                {parseFloat(spot.latitude).toFixed(6)}, {parseFloat(spot.longitude).toFixed(6)}
               </p>
+              
+              <div className="rounded-3xl p-6 md:p-8" style={{ background: '#0f1f3d', border: '1px solid rgba(30,58,95,0.5)' }}>
+                <h2 className="text-xl font-bold mb-5 flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.25)' }}>
+                    <MapPin className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  Tentang Spot Ini
+                </h2>
+                <p className="leading-relaxed whitespace-pre-wrap text-sm md:text-base" style={{ color: '#94a3b8' }}>
+                  {spot.description || 'Belum ada deskripsi untuk spot ini.'}
+                </p>
 
-              <div className="grid grid-cols-2 gap-4 mt-8 pt-6" style={{ borderTop: '1px solid rgba(30,58,95,0.5)' }}>
-                <div className="rounded-2xl p-4" style={{ background: 'rgba(10,22,40,0.8)', border: '1px solid rgba(30,58,95,0.3)' }}>
-                  <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#374d6b' }}>Kontributor</p>
-                  <div className="flex items-center gap-2 font-semibold text-sm">
-                    <div className="w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-bold" style={{ background: 'rgba(16,185,129,0.15)', color: '#34d399', border: '1px solid rgba(16,185,129,0.2)' }}>
-                      {(spot.user?.username || 'A').substring(0,1).toUpperCase()}
+                <div className="grid grid-cols-2 gap-4 mt-8 pt-6" style={{ borderTop: '1px solid rgba(30,58,95,0.5)' }}>
+                  <div className="rounded-2xl p-4" style={{ background: 'rgba(10,22,40,0.8)', border: '1px solid rgba(30,58,95,0.3)' }}>
+                    <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#374d6b' }}>Kontributor</p>
+                    <div className="flex items-center gap-2 font-semibold text-sm">
+                      <div className="w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-bold" style={{ background: 'rgba(16,185,129,0.15)', color: '#34d399', border: '1px solid rgba(16,185,129,0.2)' }}>
+                        {(spot.user?.username || 'A').substring(0,1).toUpperCase()}
+                      </div>
+                      {spot.user?.username || 'Anonim'}
                     </div>
-                    {spot.user?.username || 'Anonim'}
+                  </div>
+                  <div className="rounded-2xl p-4" style={{ background: 'rgba(10,22,40,0.8)', border: '1px solid rgba(30,58,95,0.3)' }}>
+                    <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#374d6b' }}>Koordinat</p>
+                    <p className="font-mono text-xs leading-5" style={{ color: '#7fa8cc' }}>
+                      {parseFloat(spot.latitude).toFixed(6)}<br/>
+                      {parseFloat(spot.longitude).toFixed(6)}
+                    </p>
                   </div>
                 </div>
-                <div className="rounded-2xl p-4" style={{ background: 'rgba(10,22,40,0.8)', border: '1px solid rgba(30,58,95,0.3)' }}>
-                  <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#374d6b' }}>Koordinat</p>
-                  <p className="font-mono text-xs leading-5" style={{ color: '#7fa8cc' }}>
-                    {parseFloat(spot.latitude).toFixed(6)}<br/>
-                    {parseFloat(spot.longitude).toFixed(6)}
-                  </p>
-                </div>
-              </div>
-
-              {/* Embedded Map */}
-              <div className="mt-8 pt-6" style={{ borderTop: '1px solid rgba(30,58,95,0.5)' }}>
-                <h3 className="text-sm font-bold mb-4 flex items-center gap-2" style={{ color: '#e2e8f0' }}>
-                  <MapPin className="w-4 h-4 text-emerald-400" />
-                  Lokasi di Peta
-                </h3>
-                <div className="w-full h-[250px] rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(30,58,95,0.3)' }}>
-                  <MapPickerView 
-                    position={{ lat: parseFloat(spot.latitude), lng: parseFloat(spot.longitude) }} 
-                    onPositionChange={() => {}} 
-                  />
-                </div>
               </div>
             </div>
-          </div>
 
-          {/* Right: Reviews */}
-          <div className="lg:col-span-2">
-            <div className="rounded-3xl overflow-hidden sticky top-24" style={{ background: '#0f1f3d', border: '1px solid rgba(30,58,95,0.5)' }}>
-              {/* Header */}
+            {/* Ulasan Section */}
+            <div className="rounded-3xl overflow-hidden" style={{ background: '#0f1f3d', border: '1px solid rgba(30,58,95,0.5)' }}>
               <div className="px-6 py-5 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(30,58,95,0.4)' }}>
                 <h2 className="font-bold flex items-center gap-2">
                   <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
                   Ulasan ({spot.reviews?.length || 0})
                 </h2>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl" style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)' }}>
-                  <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                  <span className="text-sm font-black text-amber-400">{avgRating}</span>
-                </div>
+              </div>
+              
+              <div className="overflow-y-auto max-h-[500px] divide-y" style={{ divideColor: 'rgba(30,58,95,0.3)' }}>
+                {spot.reviews?.length > 0 ? (
+                  spot.reviews.map((review) => (
+                    <div key={review.id} className="px-5 py-5 transition-colors hover:bg-white/[0.02]"
+                      style={{ borderBottom: '1px solid rgba(30,58,95,0.25)' }}>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold"
+                            style={{ background: 'rgba(16,185,129,0.12)', color: '#34d399', border: '1px solid rgba(16,185,129,0.2)' }}>
+                            {(review.user?.username || 'A').substring(0,1).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold">{review.user?.username || 'Pengguna'}</p>
+                            <p className="text-[11px]" style={{ color: '#374d6b' }}>
+                              {new Date(review.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-0.5">
+                          {currentUser?.role === 'Admin' && (
+                            <button 
+                              onClick={() => {
+                                setEditingReviewId(review.id);
+                                setEditingReviewText(review.reviewText);
+                              }}
+                              className="mr-3 text-xs bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded transition-colors hover:bg-red-500/20"
+                            >
+                              Sensor
+                            </button>
+                          )}
+                          {[1,2,3,4,5].map(s => (
+                            <Star key={s} className={`w-3.5 h-3.5 ${s <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-700'}`} />
+                          ))}
+                        </div>
+                      </div>
+                      {editingReviewId === review.id ? (
+                        <div className="mt-3">
+                          <textarea
+                            value={editingReviewText}
+                            onChange={e => setEditingReviewText(e.target.value)}
+                            className="w-full text-sm rounded-xl p-3 mb-2 outline-none"
+                            style={{ background: 'rgba(10,22,40,0.8)', border: '1px solid rgba(16,185,129,0.5)', color: '#e2e8f0' }}
+                            rows={3}
+                          />
+                          <div className="flex gap-2">
+                            <button onClick={() => handleUpdateReview(review.id)} className="text-xs font-semibold bg-emerald-500 text-white px-4 py-1.5 rounded-lg hover:bg-emerald-600 transition-colors">Simpan</button>
+                            <button onClick={() => setEditingReviewId(null)} className="text-xs font-semibold bg-gray-700 text-white px-4 py-1.5 rounded-lg hover:bg-gray-600 transition-colors">Batal</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-sm leading-relaxed" style={{ color: '#cbd5e1' }}>{review.reviewText}</p>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="py-12 text-center">
+                    <Star className="w-8 h-8 mx-auto mb-2 text-gray-700" />
+                    <p className="text-sm" style={{ color: '#374d6b' }}>Belum ada ulasan. Jadilah yang pertama!</p>
+                  </div>
+                )}
               </div>
 
               {/* Review Form */}
-              <div className="px-5 py-5" style={{ borderBottom: '1px solid rgba(30,58,95,0.4)' }}>
+              <div className="px-6 py-6" style={{ background: 'rgba(10,22,40,0.3)', borderTop: '1px solid rgba(30,58,95,0.4)' }}>
                 {userLogged ? (
                   existingUserReview ? (
                     <div className="text-center py-2">
-                      <p className="text-xs mb-2" style={{ color: '#94a3b8' }}>
+                      <p className="text-sm mb-2" style={{ color: '#94a3b8' }}>
                         Anda sudah memberikan ulasan untuk spot ini.
                       </p>
-                      <div className="flex items-center justify-center gap-0.5 mb-2">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star key={star} className={`w-4 h-4 ${star <= existingUserReview.rating ? 'text-amber-400 fill-amber-400' : 'text-gray-700'}`} />
-                        ))}
-                      </div>
-                      <p className="text-xs" style={{ color: '#4b7294' }}>{existingUserReview.reviewText}</p>
                     </div>
                   ) : (
                   <>
                     {reviewSuccess && (
-                      <div className="mb-3 px-3 py-2 rounded-xl text-xs font-semibold" style={{ background: 'rgba(16,185,129,0.1)', color: '#34d399', border: '1px solid rgba(16,185,129,0.2)' }}>
+                      <div className="mb-3 px-3 py-2 rounded-xl text-sm font-semibold" style={{ background: 'rgba(16,185,129,0.1)', color: '#34d399', border: '1px solid rgba(16,185,129,0.2)' }}>
                         ✓ {reviewSuccess}
                       </div>
                     )}
                     {reviewError && (
-                      <div className="mb-3 px-3 py-2 rounded-xl text-xs font-semibold" style={{ background: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }}>
+                      <div className="mb-3 px-3 py-2 rounded-xl text-sm font-semibold" style={{ background: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }}>
                         ⚠ {reviewError}
                       </div>
                     )}
                     <form onSubmit={handleReviewSubmit}>
-                      <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#374d6b' }}>Rating Anda</p>
+                      <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#374d6b' }}>Tambah Ulasan Anda</p>
                       <div className="flex gap-1 mb-3">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <button key={star} type="button"
@@ -375,13 +345,13 @@ export default function SpotDetailPage() {
                       </div>
                       <textarea value={reviewText} onChange={(e) => setReviewText(e.target.value)}
                         placeholder="Bagaimana pengalaman Anda di sini?"
-                        className="w-full text-sm rounded-xl p-3 resize-none min-h-[90px] mb-3 transition-all outline-none"
+                        className="w-full text-sm rounded-xl p-4 resize-none min-h-[100px] mb-4 transition-all outline-none"
                         style={{ background: 'rgba(10,22,40,0.8)', border: '1px solid rgba(30,58,95,0.5)', color: '#e2e8f0' }}
                         onFocus={e => e.currentTarget.style.borderColor = 'rgba(16,185,129,0.5)'}
                         onBlur={e => e.currentTarget.style.borderColor = 'rgba(30,58,95,0.5)'}
                         required />
                       <button type="submit" disabled={isSubmitting || !reviewText.trim()}
-                        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
                         style={{ background: 'linear-gradient(135deg, #059669, #10b981)', boxShadow: '0 4px 16px rgba(16,185,129,0.25)' }}>
                         <Send className="w-4 h-4" />
                         {isSubmitting ? 'Mengirim...' : 'Kirim Ulasan'}
@@ -390,81 +360,116 @@ export default function SpotDetailPage() {
                   </>
                   )
                 ) : (
-                  <div className="text-center py-2">
-                    <p className="text-xs mb-3" style={{ color: '#4b7294' }}>Masuk untuk menulis ulasan</p>
-                    <Link href="/login" className="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200"
+                  <div className="text-center py-4">
+                    <p className="text-sm mb-4" style={{ color: '#4b7294' }}>Masuk untuk menulis ulasan</p>
+                    <Link href="/login" className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200"
                       style={{ background: 'rgba(16,185,129,0.1)', color: '#34d399', border: '1px solid rgba(16,185,129,0.2)' }}>
                       Masuk ke Akun
                     </Link>
                   </div>
                 )}
               </div>
+            </div>
 
-              {/* Review List */}
-              <div className="overflow-y-auto max-h-[420px] divide-y" style={{ divideColor: 'rgba(30,58,95,0.3)' }}>
-                {spot.reviews?.length > 0 ? (
-                  spot.reviews.map((review) => (
-                    <div key={review.id} className="px-5 py-4 transition-colors hover:bg-white/[0.02]"
-                      style={{ borderBottom: '1px solid rgba(30,58,95,0.25)' }}>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold"
-                            style={{ background: 'rgba(16,185,129,0.12)', color: '#34d399', border: '1px solid rgba(16,185,129,0.2)' }}>
-                            {(review.user?.username || 'A').substring(0,1).toUpperCase()}
-                          </div>
-                          <div>
-                            <p className="text-xs font-semibold">{review.user?.username || 'Pengguna'}</p>
-                            <p className="text-[10px]" style={{ color: '#374d6b' }}>
-                              {new Date(review.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-0.5">
-                          {currentUser?.role === 'Admin' && (
-                            <button 
-                              onClick={() => {
-                                setEditingReviewId(review.id);
-                                setEditingReviewText(review.reviewText);
-                              }}
-                              className="mr-2 text-[10px] bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded transition-colors hover:bg-red-500/20"
-                            >
-                              Sensor
-                            </button>
-                          )}
-                          {[1,2,3,4,5].map(s => (
-                            <Star key={s} className={`w-3 h-3 ${s <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-700'}`} />
-                          ))}
-                        </div>
-                      </div>
-                      {editingReviewId === review.id ? (
-                        <div className="mt-2">
-                          <textarea
-                            value={editingReviewText}
-                            onChange={e => setEditingReviewText(e.target.value)}
-                            className="w-full text-xs rounded p-2 mb-2 outline-none"
-                            style={{ background: 'rgba(10,22,40,0.8)', border: '1px solid rgba(16,185,129,0.5)', color: '#e2e8f0' }}
-                          />
-                          <div className="flex gap-2">
-                            <button onClick={() => handleUpdateReview(review.id)} className="text-[10px] bg-emerald-500 text-white px-3 py-1 rounded hover:bg-emerald-600">Simpan</button>
-                            <button onClick={() => setEditingReviewId(null)} className="text-[10px] bg-gray-700 text-white px-3 py-1 rounded hover:bg-gray-600">Batal</button>
-                          </div>
-                        </div>
-                      ) : (
-                        <p className="text-xs leading-relaxed" style={{ color: '#94a3b8' }}>{review.reviewText}</p>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <div className="py-12 text-center">
-                    <Star className="w-8 h-8 mx-auto mb-2 text-gray-700" />
-                    <p className="text-xs" style={{ color: '#374d6b' }}>Belum ada ulasan. Jadilah yang pertama!</p>
+          </div>
+
+          {/* KOLOM KANAN (45%): Galeri Foto + Peta */}
+          <div className="w-full lg:w-[45%] space-y-6">
+            
+            {/* Gallery Section */}
+            <div className="rounded-3xl p-2" style={{ background: '#0f1f3d', border: '1px solid rgba(30,58,95,0.5)' }}>
+              {/* Main Photo */}
+              <div 
+                className="relative w-full rounded-2xl overflow-hidden cursor-pointer group" 
+                style={{ height: '300px' }}
+                onClick={() => setLightboxOpen(true)}
+              >
+                <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                  style={{ backgroundImage: `url(${activeImage})` }} />
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span className="bg-black/60 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur-sm">Klik untuk perbesar</span>
+                </div>
+                
+                {/* Edit button for owner */}
+                {currentUser && spot.userId === currentUser.id && (
+                  <div className="absolute top-4 right-4 z-10" onClick={(e) => e.stopPropagation()}>
+                    <Link href={`/spots/${spot.id}/edit`}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold backdrop-blur-sm transition-all duration-200 hover:scale-105"
+                      style={{ background: 'rgba(0,0,0,0.6)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)' }}>
+                      <Pencil className="w-3.5 h-3.5" />
+                      Edit Spot
+                    </Link>
                   </div>
                 )}
               </div>
+
+              {/* Thumbnails */}
+              {photos.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto mt-2 p-1" style={{ scrollbarWidth: 'none' }}>
+                  {photos.map((photo, idx) => (
+                    <button key={photo.id} onClick={() => setActivePhotoIndex(idx)}
+                      className="relative flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden transition-all duration-200"
+                      style={{
+                        border: idx === activePhotoIndex ? '2px solid #10b981' : '2px solid transparent',
+                        opacity: idx === activePhotoIndex ? 1 : 0.6,
+                      }}>
+                      <img src={photo.imageUrl} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
+
+            {/* Embedded Map */}
+            <div className="rounded-3xl p-6" style={{ background: '#0f1f3d', border: '1px solid rgba(30,58,95,0.5)' }}>
+              <h3 className="text-base font-bold mb-4 flex items-center gap-2" style={{ color: '#e2e8f0' }}>
+                <MapPin className="w-5 h-5 text-emerald-400" />
+                Lokasi di Peta
+              </h3>
+              <div className="w-full h-[300px] rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(30,58,95,0.3)' }}>
+                <MapPickerView 
+                  position={{ lat: parseFloat(spot.latitude), lng: parseFloat(spot.longitude) }} 
+                  onPositionChange={() => {}} 
+                />
+              </div>
+            </div>
+
           </div>
 
         </div>
+
+        {/* ── Lightbox Modal ── */}
+        {lightboxOpen && (
+          <div className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center cursor-zoom-out"
+               onClick={() => setLightboxOpen(false)}>
+            <div className="absolute top-6 right-6">
+              <button onClick={() => setLightboxOpen(false)} className="text-white/70 hover:text-white p-2 rounded-full bg-white/10">
+                <ArrowLeft className="w-6 h-6 rotate-180" />
+              </button>
+            </div>
+            
+            {photos.length > 1 && (
+              <button onClick={(e) => { e.stopPropagation(); prevPhoto(); }}
+                className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-200 bg-white/10 hover:bg-white/20 text-white">
+                <ChevronLeft className="w-8 h-8" />
+              </button>
+            )}
+
+            <img 
+              src={activeImage} 
+              alt="Fullscreen view" 
+              className="max-w-[90vw] max-h-[90vh] object-contain transition-transform cursor-auto"
+              onClick={(e) => e.stopPropagation()}
+            />
+
+            {photos.length > 1 && (
+              <button onClick={(e) => { e.stopPropagation(); nextPhoto(); }}
+                className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-200 bg-white/10 hover:bg-white/20 text-white">
+                <ChevronRight className="w-8 h-8" />
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
