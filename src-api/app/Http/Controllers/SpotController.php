@@ -222,11 +222,13 @@ class SpotController extends Controller
             ], 404);
         }
 
-        if ($photo->spot->userId !== $user->id && !$this->isAdmin($user)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Anda tidak memiliki izin untuk menghapus foto ini.',
-            ], 403);
+        if (!$this->isAdmin($user)) {
+            if (!$photo->spot || $photo->spot->userId !== $user->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda tidak memiliki izin untuk menghapus foto ini.',
+                ], 403);
+            }
         }
 
         $photo->delete();
