@@ -74,6 +74,10 @@ export default function SpotDetailPage() {
 
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
+    if (!userLogged) {
+      setReviewError('Silakan login terlebih dahulu untuk memberikan ulasan.');
+      return;
+    }
     if (!reviewText.trim()) return;
     setIsSubmitting(true);
     setReviewError('');
