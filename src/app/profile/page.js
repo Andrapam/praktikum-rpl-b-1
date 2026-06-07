@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   User, MapPin, Star, Trash2, LogOut, ArrowLeft,
-  ShieldCheck, LayoutDashboard, Fish, Plus
+  ShieldCheck, LayoutDashboard, Fish, Plus, Pencil
 } from 'lucide-react';
 import { 
   getUser, logout, fetchUserProfile, deleteSpot, deleteReview 
@@ -91,7 +91,7 @@ export default function ProfilePage() {
 
       {/* ── Top Navigation ── */}
       <nav className="sticky top-0 z-50 border-b border-white/5" style={{ background: 'rgba(6,13,26,0.8)', backdropFilter: 'blur(20px)' }}>
-        <div className="max-w-5xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="inline-flex items-center gap-2.5 text-gray-400 hover:text-white transition-all duration-200 group">
             <div className="w-8 h-8 rounded-lg bg-white/5 group-hover:bg-white/10 flex items-center justify-center transition-colors">
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
@@ -108,7 +108,7 @@ export default function ProfilePage() {
         </div>
       </nav>
 
-      <div className="max-w-5xl mx-auto px-4 md:px-6 py-8 relative z-10">
+      <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 relative z-10">
 
         {/* ── Hero Profile Card ── */}
         <div className="relative rounded-3xl p-px mb-8 overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.3) 0%, rgba(30,58,95,0.2) 50%, rgba(16,185,129,0.1) 100%)' }}>
@@ -194,7 +194,7 @@ export default function ProfilePage() {
         {/* ── Spots Tab ── */}
         {activeTab === 'spots' && (
           spots.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid gap-5" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
               {spots.map(spot => (
                 <div key={spot.id} className="group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1"
                   style={{ background: '#0f1f3d', border: '1px solid rgba(30,58,95,0.5)' }}
@@ -230,14 +230,24 @@ export default function ProfilePage() {
                       <span className="text-xs" style={{ color: '#374d6b' }}>
                         {new Date(spot.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </span>
-                      <button onClick={() => handleDeleteSpot(spot.id)}
-                        className="p-1.5 rounded-lg transition-all duration-200 hover:scale-110"
-                        style={{ color: '#4b7294' }}
-                        onMouseEnter={e => { e.currentTarget.style.color = '#f87171'; e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.color = '#4b7294'; e.currentTarget.style.background = 'transparent'; }}
-                        title="Hapus Spot">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <Link href={`/spots/${spot.id}/edit`}
+                          className="p-1.5 rounded-lg transition-all duration-200 hover:scale-110"
+                          style={{ color: '#4b7294' }}
+                          onMouseEnter={e => { e.currentTarget.style.color = '#60a5fa'; e.currentTarget.style.background = 'rgba(59,130,246,0.1)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.color = '#4b7294'; e.currentTarget.style.background = 'transparent'; }}
+                          title="Edit Spot">
+                          <Pencil className="w-4 h-4" />
+                        </Link>
+                        <button onClick={() => handleDeleteSpot(spot.id)}
+                          className="p-1.5 rounded-lg transition-all duration-200 hover:scale-110"
+                          style={{ color: '#4b7294' }}
+                          onMouseEnter={e => { e.currentTarget.style.color = '#f87171'; e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.color = '#4b7294'; e.currentTarget.style.background = 'transparent'; }}
+                          title="Hapus Spot">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

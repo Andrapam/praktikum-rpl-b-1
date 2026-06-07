@@ -1,4 +1,12 @@
-const API_BASE = 'http://localhost:8000/api';
+const defaultPort = '8000';
+let API_BASE = process.env.NEXT_PUBLIC_API_URL 
+  ? `${process.env.NEXT_PUBLIC_API_URL}/api`
+  : `http://localhost:${defaultPort}/api`;
+
+if (typeof window !== 'undefined') {
+  // Selalu adaptif mengikuti url browser (localhost atau IP lokal)
+  API_BASE = `http://${window.location.hostname}:${defaultPort}/api`;
+}
 
 // Helper to get auth headers
 function getAuthHeaders() {
@@ -64,11 +72,14 @@ export async function createSpot(formData) {
 
 export async function createReview(spotId, rating, reviewText) {
   const user = getUser();
-  const userId = user?.id;
+  if (!user?.id) {
+    throw new Error('Silakan login terlebih dahulu untuk menulis ulasan.');
+  }
+
   const res = await fetch(`${API_BASE}/reviews`, {
     method: 'POST',
     headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
-    body: JSON.stringify({ spotId, userId, rating, reviewText }),
+    body: JSON.stringify({ spotId, rating, reviewText }),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Gagal menyimpan review');
@@ -123,6 +134,40 @@ export async function deleteReview(reviewId) {
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Gagal menghapus ulasan');
+  return data;
+}
+
+export async function updateReview(reviewId, reviewText) {
+  const res = await fetch(`${API_BASE}/admin/reviews/${reviewId}`, {
+    method: 'PUT',
+    headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ reviewText })
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Gagal menyensor ulasan');
+  return data;
+}
+
+export async function updateSpot(id, formData) {
+  const headers = getAuthHeaders();
+  delete headers['Content-Type'];
+  const res = await fetch(`${API_BASE}/spots/${id}/update`, {
+    method: 'POST',
+    headers,
+    body: formData,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Gagal mengupdate spot');
+  return data;
+}
+
+export async function deletePhoto(photoId) {
+  const res = await fetch(`${API_BASE}/photos/${photoId}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Gagal menghapus foto');
   return data;
 }
 

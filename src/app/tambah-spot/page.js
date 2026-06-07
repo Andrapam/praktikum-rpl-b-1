@@ -86,8 +86,13 @@ export default function TambahSpotPage() {
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        setError('Ukuran foto maksimal 2MB.');
+        return;
+      }
       setSelectedFile(file.name);
       setSelectedFileObj(file);
+      setError('');
     }
   };
 
@@ -99,12 +104,18 @@ export default function TambahSpotPage() {
     }
     setLoading(true);
     try {
+      let description = formData.description || '';
+      if (formData.targetFish.trim()) {
+        description = description
+          ? `${description}\n\nTarget ikan: ${formData.targetFish.trim()}`
+          : `Target ikan: ${formData.targetFish.trim()}`;
+      }
+
       const fd = new FormData();
-      fd.append('userId', currentUser?.id);
       fd.append('name', formData.name);
       fd.append('latitude', formData.lat);
       fd.append('longitude', formData.lng);
-      fd.append('description', formData.description);
+      fd.append('description', description);
       fd.append('jenis_air', formData.waterType);
       if (selectedFileObj) {
         fd.append('photos[]', selectedFileObj);
@@ -155,7 +166,8 @@ export default function TambahSpotPage() {
       {/* MAIN CONTENT */}
       <div className="flex flex-1 flex-col lg:flex-row overflow-hidden">
         {/* LEFT FORM PANEL */}
-        <div className="w-full lg:w-[45%] bg-[#0f1923] overflow-y-auto h-auto lg:h-full px-6 sm:px-8 py-6">
+        <div className="w-full lg:w-[50%] bg-[#0f1923] overflow-y-auto h-auto lg:h-full relative flex flex-col">
+          <div className="px-6 sm:px-8 py-6 flex-1">
           {/* Section Header */}
           <div className="mb-6">
             <span className="text-[10px] tracking-widest text-emerald-500 font-semibold uppercase">
@@ -313,7 +325,7 @@ export default function TambahSpotPage() {
                   <span className="text-sm text-gray-500 group-hover:text-gray-400 transition-colors">
                     Ketuk untuk pilih foto
                   </span>
-                  <span className="text-xs text-gray-600">PNG, JPG hingga 5MB</span>
+                  <span className="text-xs text-gray-600">PNG, JPG maks. 2MB</span>
                 </div>
               )}
               <input
@@ -326,25 +338,28 @@ export default function TambahSpotPage() {
             </div>
           </div>
 
-          {error && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-red-400 text-sm mb-4">
-              {error}
-            </div>
-          )}
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-red-400 text-sm mb-4">
+                {error}
+              </div>
+            )}
+          </div>
 
-          {/* Simpan Spot */}
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={loading}
-            className="w-full mt-6 mb-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3.5 rounded-xl transition-all hover:shadow-lg hover:shadow-emerald-500/25 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Menyimpan...' : 'Simpan Spot'}
-          </button>
+          {/* Sticky Footer for Simpan Spot */}
+          <div className="sticky bottom-0 bg-[#0f1923] border-t border-[#1e3a5f]/50 px-6 sm:px-8 py-4 z-10 shrink-0">
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={loading}
+              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3.5 rounded-xl transition-all hover:shadow-lg hover:shadow-emerald-500/25 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Menyimpan...' : 'Simpan Spot'}
+            </button>
+          </div>
         </div>
 
         {/* RIGHT MAP + PREVIEW PANEL */}
-        <div className="w-full lg:w-[55%] flex flex-col h-[70vh] lg:h-full">
+        <div className="w-full lg:w-[50%] flex flex-col h-[70vh] lg:h-full">
           {/* Map Header */}
           <div className="px-5 py-3 bg-[#0f1923] border-b border-[#1e3a5f]/30 flex items-center gap-2 shrink-0">
             <MapPin className="w-4 h-4 text-emerald-500" />

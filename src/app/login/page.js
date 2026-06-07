@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { User, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { apiLogin, saveAuth } from '@/services/api';
@@ -40,10 +40,18 @@ const fishBadges = [
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('registered') === '1') {
+      setSuccess('Registrasi berhasil! Silakan login dengan akun Anda.');
+    }
+  }, [searchParams]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -148,6 +156,11 @@ export default function LoginPage() {
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            {success && (
+              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 text-emerald-400 text-sm">
+                {success}
+              </div>
+            )}
             {error && (
               <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-red-400 text-sm">
                 {error}
@@ -164,7 +177,8 @@ export default function LoginPage() {
                   value={formData.username}
                   onChange={handleChange}
                   placeholder="Masukkan username"
-                  className="w-full bg-[#0d1b2a] border border-[#1e3a5f] rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all"
+                  className="w-full bg-[#0d1b2a] border border-[#1e3a5f] rounded-xl py-3 text-white placeholder-gray-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all"
+                  style={{ paddingLeft: '3rem', paddingRight: '1rem' }}
                 />
               </div>
             </div>
@@ -180,7 +194,8 @@ export default function LoginPage() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Masukkan password"
-                  className="w-full bg-[#0d1b2a] border border-[#1e3a5f] rounded-xl pl-11 pr-12 py-3 text-white placeholder-gray-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all"
+                  className="w-full bg-[#0d1b2a] border border-[#1e3a5f] rounded-xl py-3 text-white placeholder-gray-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all"
+                  style={{ paddingLeft: '3rem', paddingRight: '3rem' }}
                 />
                 <button
                   type="button"

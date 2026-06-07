@@ -37,21 +37,37 @@ class ReviewController extends Controller
      */
     public function store(Request $request)
     {
+        $user = $this->authUser($request);
+
         $request->validate([
             'spotId' => 'required|exists:spot,id',
-            'userId' => 'required|exists:users,id',
             'rating' => 'required|integer|min:1|max:5',
             'reviewText' => 'nullable|string',
         ]);
 
-        $data = $request->only(['spotId', 'userId', 'rating', 'reviewText']);
+        $existingReview = Review::where('spotId', $request->spotId)
+            ->where('userId', $user->id)
+            ->first();
 
-        // Apply bad word censoring
-        if (!empty($data['reviewText'])) {
-            $data['reviewText'] = $this->censorBadWords($data['reviewText']);
+        if ($existingReview) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda sudah memberikan ulasan untuk spot ini.',
+            ], 422);
         }
 
-        $review = Review::create($data);
+        $reviewText = $request->reviewText;
+        if (!empty($reviewText)) {
+            $reviewText = $this->censorBadWords($reviewText);
+        }
+
+        $review = Review::create([
+            'spotId' => $request->spotId,
+            'userId' => $user->id,
+            'rating' => $request->rating,
+            'reviewText' => $reviewText,
+        ]);
+
         $review->load('user', 'spot');
 
         return response()->json([
@@ -62,11 +78,13 @@ class ReviewController extends Controller
     }
 
     /**
-     * Delete a review.
+     * Delete a review (author or admin).
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $user = $this->authUser($request);
         $review = Review::find($id);
+
         if (!$review) {
             return response()->json([
                 'success' => false,
@@ -74,11 +92,55 @@ class ReviewController extends Controller
             ], 404);
         }
 
+        if ($review->userId !== $user->id && !$this->isAdmin($user)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda tidak memiliki izin untuk menghapus ulasan ini.',
+            ], 403);
+        }
+
         $review->delete();
 
         return response()->json([
             'success' => true,
             'message' => 'Ulasan berhasil dihapus.',
+        ]);
+    }
+
+    /**
+     * Update a review (for Admin to censor words).
+     */
+    public function update(Request $request, $id)
+    {
+        $user = $this->authUser($request);
+        $review = Review::find($id);
+
+        if (!$review) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ulasan tidak ditemukan.',
+            ], 404);
+        }
+
+        if (!$this->isAdmin($user)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hanya admin yang dapat mengedit/menyensor ulasan.',
+            ], 403);
+        }
+
+        $request->validate([
+            'reviewText' => 'required|string',
+        ]);
+
+        $review->update([
+            'reviewText' => $request->reviewText,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Ulasan berhasil diperbarui.',
+            'data' => $review,
         ]);
     }
 }
