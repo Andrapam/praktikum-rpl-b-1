@@ -28,7 +28,6 @@ class SpotPhoto extends Model
         if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {
             return $value;
         }
-
-        return rtrim(config('app.url'), '/') . $value;
+        return $value;
     }
 }

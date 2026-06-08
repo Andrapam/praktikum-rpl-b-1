@@ -1,12 +1,4 @@
-const defaultPort = '8000';
-let API_BASE = process.env.NEXT_PUBLIC_API_URL 
-  ? `${process.env.NEXT_PUBLIC_API_URL}/api`
-  : `http://localhost:${defaultPort}/api`;
-
-if (typeof window !== 'undefined') {
-  // Selalu adaptif mengikuti url browser (localhost atau IP lokal)
-  API_BASE = `http://${window.location.hostname}:${defaultPort}/api`;
-}
+const API_BASE = '/api';
 
 // Helper to get auth headers
 function getAuthHeaders() {
