@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   Users, MapPin, Star, ShieldAlert,
-  Trash2, Ban, CheckCircle, ArrowLeft, Fish, Image as ImageIcon
+  Trash2, Ban, CheckCircle, ArrowLeft, Fish, Image as ImageIcon,
+  Search, X
 } from 'lucide-react';
 import { 
   getUser, fetchAllUsers, updateUserStatus, fetchSpots, deleteSpot, deleteReview,
@@ -20,6 +21,7 @@ export default function AdminDashboard() {
   const [allReviewsData, setAllReviewsData] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('users');
   const [deletingPhotoId, setDeletingPhotoId] = useState(null);
 
@@ -32,6 +34,10 @@ export default function AdminDashboard() {
     setCurrentUser(user);
     loadData();
   }, [router]);
+
+  useEffect(() => {
+    setSearchTerm('');
+  }, [activeTab]);
 
   const loadData = async () => {
     try {
@@ -123,6 +129,20 @@ export default function AdminDashboard() {
     spotName: review.spot?.name || 'Spot tidak diketahui',
   }));
 
+  const filteredUsers = users.filter(user => 
+    user.username.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredSpots = spots.filter(spot => 
+    spot.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredReviews = allReviews.filter(review => 
+    (review.reviewText || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    review.spotName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (review.user?.username || '').toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const bannedCount = stats?.banned_users ?? users.filter(u => u.status === 'Banned').length;
 
   const TABS = [
@@ -208,7 +228,31 @@ export default function AdminDashboard() {
 
           {/* USERS TAB */}
           {activeTab === 'users' && (
-            <div className="overflow-x-auto w-full">
+            <>
+              {/* Search Bar */}
+              <div className="p-4 border-b border-white/5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                <div className="relative max-w-sm">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#4b7294' }} />
+                  <input
+                    type="text"
+                    placeholder="Cari username..."
+                    className="w-full pl-10 pr-10 py-2.5 rounded-xl text-sm transition-all duration-200 outline-none focus:ring-1 focus:ring-emerald-500/30"
+                    style={{ background: '#060d1a', border: '1px solid rgba(30,58,95,0.5)', color: '#fff' }}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  {searchTerm && (
+                    <button 
+                      onClick={() => setSearchTerm('')} 
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-white/10 rounded-lg transition-colors"
+                    >
+                      <X className="w-3.5 h-3.5 text-slate-400" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="overflow-x-auto w-full">
               <table className="w-full min-w-full text-sm text-left">
                 <thead>
                   <tr style={{ background: 'rgba(10,22,40,0.8)', borderBottom: '1px solid rgba(30,58,95,0.5)' }}>
@@ -219,9 +263,9 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((user, idx) => (
+                  {filteredUsers.map((user, idx) => (
                     <tr key={user.id} className="transition-colors"
-                      style={{ borderBottom: idx < users.length - 1 ? '1px solid rgba(30,58,95,0.3)' : 'none' }}
+                      style={{ borderBottom: idx < filteredUsers.length - 1 ? '1px solid rgba(30,58,95,0.3)' : 'none' }}
                       onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                       <td className="px-6 py-4">
@@ -268,14 +312,45 @@ export default function AdminDashboard() {
                       </td>
                     </tr>
                   ))}
+                  {filteredUsers.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-6 py-16 text-center" style={{ color: '#4b7294' }}>
+                        {searchTerm 
+                          ? `Tidak ditemukan pengguna dengan nama "${searchTerm}"` 
+                          : 'Belum ada data pengguna.'}
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
+            </>
           )}
 
           {/* SPOTS TAB */}
           {activeTab === 'spots' && (
-            <div className="overflow-x-auto w-full">
+            <>
+              {/* Search Bar Spot */}
+              <div className="p-4 border-b border-white/5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                <div className="relative max-w-sm">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#4b7294' }} />
+                  <input
+                    type="text"
+                    placeholder="Cari nama spot..."
+                    className="w-full pl-10 pr-10 py-2.5 rounded-xl text-sm transition-all duration-200 outline-none focus:ring-1 focus:ring-emerald-500/30"
+                    style={{ background: '#060d1a', border: '1px solid rgba(30,58,95,0.5)', color: '#fff' }}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  {searchTerm && (
+                    <button onClick={() => setSearchTerm('')} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-white/10 rounded-lg transition-colors">
+                      <X className="w-3.5 h-3.5 text-slate-400" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="overflow-x-auto w-full">
               <table className="w-full min-w-full text-sm text-left">
                 <thead>
                   <tr style={{ background: 'rgba(10,22,40,0.8)', borderBottom: '1px solid rgba(30,58,95,0.5)' }}>
@@ -286,9 +361,9 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {spots.map((spot, idx) => (
+                  {filteredSpots.map((spot, idx) => (
                     <tr key={spot.id} className="transition-colors"
-                      style={{ borderBottom: idx < spots.length - 1 ? '1px solid rgba(30,58,95,0.3)' : 'none' }}
+                      style={{ borderBottom: idx < filteredSpots.length - 1 ? '1px solid rgba(30,58,95,0.3)' : 'none' }}
                       onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                       <td className="px-6 py-4 text-xs font-bold" style={{ color: '#374d6b' }}>{idx + 1}</td>
@@ -341,14 +416,45 @@ export default function AdminDashboard() {
                       </td>
                     </tr>
                   ))}
+                  {filteredSpots.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-16 text-center" style={{ color: '#4b7294' }}>
+                        {searchTerm 
+                          ? `Tidak ditemukan spot dengan nama "${searchTerm}"` 
+                          : 'Belum ada data spot.'}
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
+            </>
           )}
 
           {/* REVIEWS TAB */}
           {activeTab === 'reviews' && (
-            <div className="overflow-x-auto w-full">
+            <>
+              {/* Universal Search Review */}
+              <div className="p-4 border-b border-white/5" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                <div className="relative max-w-sm">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#4b7294' }} />
+                  <input
+                    type="text"
+                    placeholder="Cari ulasan, spot, atau user..."
+                    className="w-full pl-10 pr-10 py-2.5 rounded-xl text-sm transition-all duration-200 outline-none focus:ring-1 focus:ring-emerald-500/30"
+                    style={{ background: '#060d1a', border: '1px solid rgba(30,58,95,0.5)', color: '#fff' }}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  {searchTerm && (
+                    <button onClick={() => setSearchTerm('')} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-white/10 rounded-lg transition-colors">
+                      <X className="w-3.5 h-3.5 text-slate-400" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="overflow-x-auto w-full">
               <table className="w-full min-w-full text-sm text-left">
                 <thead>
                   <tr style={{ background: 'rgba(10,22,40,0.8)', borderBottom: '1px solid rgba(30,58,95,0.5)' }}>
@@ -359,9 +465,9 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {allReviews.map((review, idx) => (
+                  {filteredReviews.map((review, idx) => (
                     <tr key={review.id} className="transition-colors"
-                      style={{ borderBottom: idx < allReviews.length - 1 ? '1px solid rgba(30,58,95,0.3)' : 'none' }}
+                      style={{ borderBottom: idx < filteredReviews.length - 1 ? '1px solid rgba(30,58,95,0.3)' : 'none' }}
                       onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                       <td className="px-6 py-4 max-w-[260px]">
@@ -403,16 +509,19 @@ export default function AdminDashboard() {
                       </td>
                     </tr>
                   ))}
-                  {allReviews.length === 0 && (
+                  {filteredReviews.length === 0 && (
                     <tr>
                       <td colSpan={5} className="px-6 py-16 text-center" style={{ color: '#374d6b' }}>
-                        Belum ada ulasan dalam sistem.
+                        {searchTerm 
+                          ? `Tidak ditemukan ulasan yang cocok dengan "${searchTerm}"` 
+                          : 'Belum ada ulasan dalam sistem.'}
                       </td>
                     </tr>
                   )}
                 </tbody>
               </table>
             </div>
+            </>
           )}
         </div>
 

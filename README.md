@@ -71,7 +71,7 @@ type nul > database\database.sqlite
 php artisan migrate:fresh --seed
 
 # Jalankan server backend
-php artisan serve
+php artisan serve --host=0.0.0.0
 ```
 > Backend akan berjalan di **http://127.0.0.1:8000**
 
