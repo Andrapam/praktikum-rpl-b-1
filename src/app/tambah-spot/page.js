@@ -164,9 +164,9 @@ export default function TambahSpotPage() {
       </header>
 
       {/* MAIN CONTENT */}
-      <div className="flex flex-1 flex-col lg:flex-row overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-hidden lg:flex-row">
         {/* LEFT FORM PANEL */}
-        <div className="w-full lg:w-[50%] bg-[#0f1923] overflow-y-auto h-auto lg:h-full relative flex flex-col">
+        <div className="relative flex h-auto w-full flex-col overflow-y-auto bg-[#0f1923] lg:h-full lg:w-[46%]">
           <div className="px-6 sm:px-8 py-6 flex-1">
           {/* Section Header */}
           <div className="mb-6">
@@ -359,7 +359,7 @@ export default function TambahSpotPage() {
         </div>
 
         {/* RIGHT MAP + PREVIEW PANEL */}
-        <div className="w-full lg:w-[50%] flex flex-col h-[70vh] lg:h-full">
+        <div className="relative flex h-[70vh] w-full flex-col bg-[#0a1628] lg:h-full lg:w-[54%]">
           {/* Map Header */}
           <div className="px-5 py-3 bg-[#0f1923] border-b border-[#1e3a5f]/30 flex items-center gap-2 shrink-0">
             <MapPin className="w-4 h-4 text-emerald-500" />
@@ -369,39 +369,39 @@ export default function TambahSpotPage() {
           </div>
 
           {/* Map Container */}
-          <div className="flex-1 relative">
+          <div className="relative flex-1 overflow-hidden">
             <MapPickerView
               position={markerPosition}
               onPositionChange={handleMapClick}
             />
-          </div>
 
-          {/* Preview Section */}
-          <div className="bg-[#0f1923] border-t border-[#1e3a5f]/30 px-6 py-5 shrink-0">
-            <span className="text-[10px] tracking-widest text-emerald-500/70 font-semibold uppercase block mb-3">
-              PREVIEW KARTU SPOT
-            </span>
-            <div className="bg-[#1a2332] rounded-xl p-4 border border-[#1e3a5f]/30">
-              <h3 className="font-semibold text-white text-sm">
+            {/* Floating Preview Card */}
+            <div className="absolute bottom-5 left-5 z-[900] w-[calc(100%-2.5rem)] max-w-sm rounded-2xl border border-white/10 bg-[#0f1923]/95 p-4 shadow-2xl shadow-black/40 backdrop-blur-xl">
+              <div className="mb-2 flex items-center justify-between gap-3">
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-emerald-400">
+                  Preview Spot
+                </span>
+                <span className="text-[10px] text-slate-500">Tampil di beranda</span>
+              </div>
+              <h3 className="truncate text-base font-semibold text-white">
                 {formData.name || 'Nama spot akan muncul di sini'}
               </h3>
-              <div className="flex items-center gap-2 mt-2">
+              <div className="mt-2 flex flex-wrap items-center gap-2">
                 {formData.waterType ? (
-                  <span
-                    className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${getBadgeColor(formData.waterType)}`}
-                  >
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${getBadgeColor(formData.waterType)}`}>
                     {formData.waterType}
                   </span>
                 ) : (
-                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gray-500/20 text-gray-400">
+                  <span className="rounded-full bg-gray-500/20 px-2 py-0.5 text-[10px] font-semibold text-gray-400">
                     Jenis Air
                   </span>
                 )}
-                <span className="text-xs text-gray-500">— km</span>
+                <span className="text-xs text-slate-500">
+                  {formData.lat && formData.lng ? `${formData.lat}, ${formData.lng}` : 'Koordinat belum dipilih'}
+                </span>
               </div>
-              <p className="text-xs text-gray-500 mt-2 line-clamp-2">
-                {formData.description ||
-                  'Deskripsi spot akan tampil di sini. Ceritakan kondisi lokasi, akses jalan, dan waktu terbaik untuk memancing.'}
+              <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-slate-400">
+                {formData.description || 'Deskripsi singkat spot akan tampil di sini.'}
               </p>
             </div>
           </div>

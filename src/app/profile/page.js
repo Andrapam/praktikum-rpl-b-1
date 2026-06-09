@@ -91,7 +91,7 @@ export default function ProfilePage() {
 
       {/* ── Top Navigation ── */}
       <nav className="sticky top-0 z-50 border-b border-white/5" style={{ background: 'rgba(6,13,26,0.8)', backdropFilter: 'blur(20px)' }}>
-        <div className="max-w-6xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+        <div className="mx-auto flex h-16 w-full max-w-[1600px] items-center justify-between px-4 md:px-6">
           <Link href="/" className="inline-flex items-center gap-2.5 text-gray-400 hover:text-white transition-all duration-200 group">
             <div className="w-8 h-8 rounded-lg bg-white/5 group-hover:bg-white/10 flex items-center justify-center transition-colors">
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
@@ -108,27 +108,27 @@ export default function ProfilePage() {
         </div>
       </nav>
 
-      <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 relative z-10">
+      <div className="relative z-10 mx-auto w-full max-w-[1600px] px-4 py-6 md:px-6 lg:px-8">
 
         {/* ── Hero Profile Card ── */}
-        <div className="relative rounded-3xl p-px mb-8 overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.3) 0%, rgba(30,58,95,0.2) 50%, rgba(16,185,129,0.1) 100%)' }}>
-          <div className="rounded-3xl p-6 md:p-8 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f1f3d 0%, #112240 100%)' }}>
+        <div className="relative mb-6 overflow-hidden rounded-2xl border border-[#1e3a5f]/60">
+          <div className="relative overflow-hidden rounded-2xl p-5 md:p-6" style={{ background: 'linear-gradient(135deg, #0f1f3d 0%, #112240 100%)' }}>
             {/* Decorative orbs */}
             <div className="absolute -top-16 -right-16 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
             <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
 
-            <div className="relative z-10 flex flex-col md:flex-row items-center md:justify-between gap-6">
+            <div className="relative z-10 flex flex-col items-stretch justify-between gap-5 md:flex-row md:items-center">
               {/* Avatar + Info */}
-              <div className="flex items-center gap-5">
+              <div className="flex min-w-0 items-center gap-4">
                 <div className="relative">
-                  <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-black tracking-tight shadow-2xl" 
+                  <div className="flex h-16 w-16 items-center justify-center rounded-xl text-xl font-black tracking-tight shadow-xl"
                     style={{ background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', boxShadow: '0 8px 32px rgba(16,185,129,0.35)' }}>
                     {currentUser.username.substring(0, 2).toUpperCase()}
                   </div>
                   <div className="absolute -bottom-1.5 -right-1.5 w-5 h-5 bg-emerald-400 rounded-full border-2 border-[#112240]"></div>
                 </div>
                 <div>
-                  <h1 className="text-2xl md:text-3xl font-black tracking-tight mb-2">{currentUser.username}</h1>
+                  <h1 className="mb-2 truncate text-xl font-black tracking-tight md:text-2xl">{currentUser.username}</h1>
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border"
                       style={{ background: 'rgba(16,185,129,0.1)', borderColor: 'rgba(16,185,129,0.3)', color: '#34d399' }}>
@@ -144,16 +144,16 @@ export default function ProfilePage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-3 w-full md:w-auto">
+              <div className="flex w-full flex-wrap items-center gap-2 md:w-auto md:justify-end">
                 {currentUser.role === 'Admin' && (
-                  <Link href="/admin" className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
+                  <Link href="/admin" className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-semibold transition-all duration-200 hover:-translate-y-0.5 md:flex-none"
                     style={{ background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)', color: '#a5b4fc' }}>
                     <LayoutDashboard className="w-4 h-4" />
                     Dashboard Admin
                   </Link>
                 )}
                 <button onClick={handleLogout}
-                  className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
+                  className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-semibold transition-all duration-200 hover:-translate-y-0.5 md:flex-none"
                   style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#f87171' }}>
                   <LogOut className="w-4 h-4" />
                   Keluar
@@ -171,13 +171,13 @@ export default function ProfilePage() {
         )}
 
         {/* ── Tabs ── */}
-        <div className="flex gap-1.5 mb-6 p-1.5 rounded-2xl w-full" style={{ background: 'rgba(17,34,64,0.8)', border: '1px solid rgba(30,58,95,0.4)' }}>
+        <div className="mb-6 grid w-full grid-cols-2 gap-1 rounded-xl p-1" style={{ background: 'rgba(17,34,64,0.8)', border: '1px solid rgba(30,58,95,0.4)' }}>
           {[
             { id: 'spots', label: `Spot Saya`, count: spots.length, icon: MapPin },
             { id: 'reviews', label: `Ulasan Saya`, count: reviews.length, icon: Star },
           ].map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200"
+              className="flex min-w-0 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200"
               style={activeTab === tab.id
                 ? { background: 'linear-gradient(135deg, #059669, #10b981)', color: '#fff', boxShadow: '0 4px 16px rgba(16,185,129,0.25)' }
                 : { color: '#6b7280' }}>
@@ -194,14 +194,14 @@ export default function ProfilePage() {
         {/* ── Spots Tab ── */}
         {activeTab === 'spots' && (
           spots.length > 0 ? (
-            <div className="grid gap-5" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {spots.map(spot => (
                 <div key={spot.id} className="group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1"
                   style={{ background: '#0f1f3d', border: '1px solid rgba(30,58,95,0.5)' }}
                   onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(16,185,129,0.4)'}
                   onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(30,58,95,0.5)'}>
                   {/* Photo */}
-                  <div className="relative h-44 overflow-hidden bg-[#0a1628]">
+                  <div className="relative h-48 overflow-hidden bg-[#0a1628]">
                     {spot.photos?.length > 0 ? (
                       <img src={spot.photos[0].imageUrl} alt={spot.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     ) : (
@@ -218,7 +218,7 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   {/* Info */}
-                  <div className="p-5">
+                  <div className="p-4">
                     <Link href={`/spots/${spot.id}`} className="block font-bold text-base mb-1.5 transition-colors group-hover:text-emerald-400">
                       {spot.name}
                     </Link>
@@ -253,7 +253,7 @@ export default function ProfilePage() {
                 </div>
               ))}
               {/* Add spot card */}
-              <Link href="/tambah-spot" className="group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[240px]"
+              <Link href="/tambah-spot" className="group flex min-h-[300px] flex-col items-center justify-center gap-3 overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-1"
                 style={{ background: 'rgba(15,31,61,0.5)', border: '1px dashed rgba(30,58,95,0.6)' }}
                 onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(16,185,129,0.5)'}
                 onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(30,58,95,0.6)'}>
@@ -282,11 +282,11 @@ export default function ProfilePage() {
         {/* ── Reviews Tab ── */}
         {activeTab === 'reviews' && (
           reviews.length > 0 ? (
-            <div className="rounded-3xl overflow-hidden" style={{ background: '#0f1f3d', border: '1px solid rgba(30,58,95,0.4)' }}>
+            <div className="overflow-hidden rounded-2xl" style={{ background: '#0f1f3d', border: '1px solid rgba(30,58,95,0.4)' }}>
               {reviews.map((review, idx) => (
-                <div key={review.id} className="p-6 transition-colors hover:bg-white/[0.02]"
+                <div key={review.id} className="p-4 transition-colors hover:bg-white/[0.02] md:p-5"
                   style={{ borderBottom: idx < reviews.length - 1 ? '1px solid rgba(30,58,95,0.4)' : 'none' }}>
-                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                  <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div className="flex-1 min-w-0">
                       <Link href={`/spots/${review.spot?.id}`} className="inline-flex items-center gap-2 font-semibold text-emerald-400 hover:text-emerald-300 transition-colors mb-2 group">
                         <MapPin className="w-4 h-4 shrink-0" />

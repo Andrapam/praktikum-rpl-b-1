@@ -162,7 +162,7 @@ export default function AdminDashboard() {
 
       {/* ── Top Navigation ── */}
       <nav className="sticky top-0 z-50 border-b border-white/5" style={{ background: 'rgba(6,13,26,0.85)', backdropFilter: 'blur(20px)' }}>
-        <div className="max-w-6xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+        <div className="mx-auto flex h-16 w-full max-w-[1600px] items-center justify-between px-4 md:px-6 lg:px-8">
           <Link href="/profile" className="inline-flex items-center gap-2.5 transition-all duration-200 group" style={{ color: '#4b7294' }}
             onMouseEnter={e => e.currentTarget.style.color = '#fff'}
             onMouseLeave={e => e.currentTarget.style.color = '#4b7294'}>
@@ -183,20 +183,20 @@ export default function AdminDashboard() {
         </div>
       </nav>
 
-      <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 relative z-10">
+      <div className="relative z-10 mx-auto w-full max-w-[1600px] px-4 py-6 md:px-6 lg:px-8">
 
         {/* ── Stats Cards ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
           {[
             { label: 'Total Pengguna', value: stats?.total_users ?? users.length, icon: Users, color: '#818cf8', glow: 'rgba(99,102,241,0.15)' },
             { label: 'User Aktif',     value: stats?.active_users ?? users.filter(u => u.status === 'Active').length, icon: CheckCircle, color: '#34d399', glow: 'rgba(16,185,129,0.15)' },
             { label: 'User Diblokir', value: bannedCount, icon: Ban, color: '#f87171', glow: 'rgba(239,68,68,0.15)' },
             { label: 'Total Spot',    value: stats?.total_spots ?? spots.length, icon: MapPin, color: '#fbbf24', glow: 'rgba(245,158,11,0.15)' },
           ].map(stat => (
-            <div key={stat.label} className="rounded-2xl p-5 transition-all duration-300 hover:-translate-y-0.5"
+            <div key={stat.label} className="rounded-xl p-4 transition-all duration-300 hover:-translate-y-0.5"
               style={{ background: '#0f1f3d', border: '1px solid rgba(30,58,95,0.5)' }}>
-              <div className="w-10 h-10 rounded-xl mb-3 flex items-center justify-center" style={{ background: stat.glow, border: `1px solid ${stat.color}33` }}>
-                <stat.icon className="w-5 h-5" style={{ color: stat.color }} />
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg" style={{ background: stat.glow, border: `1px solid ${stat.color}33` }}>
+                <stat.icon className="w-4 h-4" style={{ color: stat.color }} />
               </div>
               <p className="text-2xl font-black mb-0.5">{stat.value}</p>
               <p className="text-xs font-medium" style={{ color: '#4b7294' }}>{stat.label}</p>
@@ -205,10 +205,10 @@ export default function AdminDashboard() {
         </div>
 
         {/* ── Tabs ── */}
-        <div className="flex gap-1.5 p-1.5 rounded-2xl mb-6" style={{ background: 'rgba(17,34,64,0.8)', border: '1px solid rgba(30,58,95,0.4)' }}>
+        <div className="mb-4 grid grid-cols-3 gap-1 rounded-xl p-1" style={{ background: 'rgba(17,34,64,0.8)', border: '1px solid rgba(30,58,95,0.4)' }}>
           {TABS.map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200"
+              className="flex min-w-0 items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition-all duration-200"
               style={activeTab === tab.id
                 ? { background: tab.activeBg, color: '#fff', boxShadow: `0 4px 16px ${tab.color}33` }
                 : { color: '#6b7280' }}>
@@ -224,7 +224,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* ── Table Panel ── */}
-        <div className="rounded-3xl overflow-hidden" style={{ background: '#0f1f3d', border: '1px solid rgba(30,58,95,0.4)' }}>
+        <div className="overflow-hidden rounded-2xl" style={{ background: '#0f1f3d', border: '1px solid rgba(30,58,95,0.4)' }}>
 
           {/* USERS TAB */}
           {activeTab === 'users' && (
@@ -232,12 +232,13 @@ export default function AdminDashboard() {
               {/* Search Bar */}
               <div className="p-4 border-b border-white/5" style={{ background: 'rgba(255,255,255,0.02)' }}>
                 <div className="relative max-w-sm">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#4b7294' }} />
+                  <Search className="pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 w-4 h-4" style={{ color: '#4b7294' }} />
                   <input
                     type="text"
                     placeholder="Cari username..."
-                    className="w-full pl-10 pr-10 py-2.5 rounded-xl text-sm transition-all duration-200 outline-none focus:ring-1 focus:ring-emerald-500/30"
-                    style={{ background: '#060d1a', border: '1px solid rgba(30,58,95,0.5)', color: '#fff' }}
+                    aria-label="Cari username"
+                    className="w-full py-2.5 rounded-xl text-sm transition-all duration-200 outline-none focus:ring-1 focus:ring-emerald-500/30"
+                    style={{ background: '#060d1a', border: '1px solid rgba(30,58,95,0.5)', color: '#fff', paddingLeft: '2.75rem', paddingRight: '2.75rem' }}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -253,7 +254,7 @@ export default function AdminDashboard() {
               </div>
 
               <div className="overflow-x-auto w-full">
-              <table className="w-full min-w-full text-sm text-left">
+              <table className="w-full min-w-[980px] text-sm text-left">
                 <thead>
                   <tr style={{ background: 'rgba(10,22,40,0.8)', borderBottom: '1px solid rgba(30,58,95,0.5)' }}>
                     {['Username', 'Role', 'Status', 'Spot', 'Ulasan', 'Aksi'].map((h, i) => (
@@ -296,7 +297,7 @@ export default function AdminDashboard() {
                       </td>
                       <td className="px-6 py-4 text-center text-sm font-semibold" style={{ color: '#4b7294' }}>{user.spots_count || 0}</td>
                       <td className="px-6 py-4 text-center text-sm font-semibold" style={{ color: '#4b7294' }}>{user.reviews_count || 0}</td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="w-[140px] whitespace-nowrap px-6 py-4 text-right">
                         {user.role !== 'Admin' && (
                           <button onClick={() => handleToggleStatus(user)}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200"
@@ -333,12 +334,13 @@ export default function AdminDashboard() {
               {/* Search Bar Spot */}
               <div className="p-4 border-b border-white/5" style={{ background: 'rgba(255,255,255,0.02)' }}>
                 <div className="relative max-w-sm">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#4b7294' }} />
+                  <Search className="pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 w-4 h-4" style={{ color: '#4b7294' }} />
                   <input
                     type="text"
                     placeholder="Cari nama spot..."
-                    className="w-full pl-10 pr-10 py-2.5 rounded-xl text-sm transition-all duration-200 outline-none focus:ring-1 focus:ring-emerald-500/30"
-                    style={{ background: '#060d1a', border: '1px solid rgba(30,58,95,0.5)', color: '#fff' }}
+                    aria-label="Cari nama spot"
+                    className="w-full py-2.5 rounded-xl text-sm transition-all duration-200 outline-none focus:ring-1 focus:ring-emerald-500/30"
+                    style={{ background: '#060d1a', border: '1px solid rgba(30,58,95,0.5)', color: '#fff', paddingLeft: '2.75rem', paddingRight: '2.75rem' }}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -351,7 +353,7 @@ export default function AdminDashboard() {
               </div>
 
               <div className="overflow-x-auto w-full">
-              <table className="w-full min-w-full text-sm text-left">
+              <table className="w-full min-w-[1050px] text-sm text-left">
                 <thead>
                   <tr style={{ background: 'rgba(10,22,40,0.8)', borderBottom: '1px solid rgba(30,58,95,0.5)' }}>
                     {['#', 'Nama Spot', 'Jenis Air', 'Kontributor', 'Aksi'].map((h, i) => (
@@ -404,7 +406,7 @@ export default function AdminDashboard() {
                           <span style={{ color: '#7fa8cc' }}>{spot.user?.username || 'Anonim'}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="w-[160px] whitespace-nowrap px-6 py-4 text-right">
                         <button onClick={() => handleDeleteSpot(spot)}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200"
                           style={{ background: 'rgba(239,68,68,0.08)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }}
@@ -437,12 +439,13 @@ export default function AdminDashboard() {
               {/* Universal Search Review */}
               <div className="p-4 border-b border-white/5" style={{ background: 'rgba(255,255,255,0.02)' }}>
                 <div className="relative max-w-sm">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#4b7294' }} />
+                  <Search className="pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 w-4 h-4" style={{ color: '#4b7294' }} />
                   <input
                     type="text"
                     placeholder="Cari ulasan, spot, atau user..."
-                    className="w-full pl-10 pr-10 py-2.5 rounded-xl text-sm transition-all duration-200 outline-none focus:ring-1 focus:ring-emerald-500/30"
-                    style={{ background: '#060d1a', border: '1px solid rgba(30,58,95,0.5)', color: '#fff' }}
+                    aria-label="Cari ulasan, spot, atau pengguna"
+                    className="w-full py-2.5 rounded-xl text-sm transition-all duration-200 outline-none focus:ring-1 focus:ring-emerald-500/30"
+                    style={{ background: '#060d1a', border: '1px solid rgba(30,58,95,0.5)', color: '#fff', paddingLeft: '2.75rem', paddingRight: '2.75rem' }}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -455,7 +458,7 @@ export default function AdminDashboard() {
               </div>
 
               <div className="overflow-x-auto w-full">
-              <table className="w-full min-w-full text-sm text-left">
+              <table className="w-full min-w-[1120px] table-fixed text-sm text-left">
                 <thead>
                   <tr style={{ background: 'rgba(10,22,40,0.8)', borderBottom: '1px solid rgba(30,58,95,0.5)' }}>
                     {['Isi Ulasan', 'Rating', 'Spot', 'Pengguna', 'Aksi'].map((h, i) => (
@@ -470,12 +473,12 @@ export default function AdminDashboard() {
                       style={{ borderBottom: idx < filteredReviews.length - 1 ? '1px solid rgba(30,58,95,0.3)' : 'none' }}
                       onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                      <td className="px-6 py-4 max-w-[260px]">
+                      <td className="w-[38%] px-6 py-4">
                         <p className="truncate text-sm" style={{ color: '#94a3b8' }} title={review.reviewText}>
                           {review.reviewText || <span style={{ color: '#374d6b', fontStyle: 'italic' }}>Tanpa teks</span>}
                         </p>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="w-[150px] px-6 py-4">
                         <div className="flex items-center gap-1.5">
                           <div className="flex gap-0.5">
                             {[1,2,3,4,5].map(s => (
@@ -485,10 +488,10 @@ export default function AdminDashboard() {
                           <span className="text-xs font-bold text-amber-400">{review.rating}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 max-w-[160px]">
+                      <td className="w-[220px] px-6 py-4">
                         <span className="truncate block text-sm" style={{ color: '#7fa8cc' }} title={review.spotName}>{review.spotName}</span>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="w-[190px] px-6 py-4">
                         <div className="flex items-center gap-2">
                           <div className="w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-bold"
                             style={{ background: 'rgba(75,114,148,0.2)', color: '#7fa8cc' }}>
@@ -497,7 +500,7 @@ export default function AdminDashboard() {
                           <span style={{ color: '#7fa8cc' }}>{review.user?.username || 'Anonim'}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="w-[170px] whitespace-nowrap px-6 py-4 text-right">
                         <button onClick={() => handleDeleteReview(review)}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200"
                           style={{ background: 'rgba(239,68,68,0.08)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }}

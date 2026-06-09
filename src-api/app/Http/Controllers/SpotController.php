@@ -94,7 +94,7 @@ class SpotController extends Controller
                 $path = $photo->store('spot-photos', 'public');
                 SpotPhoto::create([
                     'spotId' => $spot->id,
-                    'imageUrl' => url('/storage/' . $path),
+                    'imageUrl' => '/storage/' . $path,
                 ]);
             }
         }

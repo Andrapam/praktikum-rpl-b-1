@@ -1,12 +1,4 @@
-const defaultPort = '8000';
-let API_BASE = process.env.NEXT_PUBLIC_API_URL 
-  ? `${process.env.NEXT_PUBLIC_API_URL}/api`
-  : `http://localhost:${defaultPort}/api`;
-
-if (typeof window !== 'undefined') {
-  // Selalu adaptif mengikuti url browser (localhost atau IP lokal)
-  API_BASE = `http://${window.location.hostname}:${defaultPort}/api`;
-}
+const API_BASE = '/api';
 
 // Helper to get auth headers
 function getAuthHeaders() {
@@ -41,6 +33,7 @@ export async function apiRegister(username, password) {
 export async function fetchSpots() {
   const res = await fetch(`${API_BASE}/spots`, {
     headers: getAuthHeaders(),
+    cache: 'no-store',
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Gagal memuat spot');
@@ -50,6 +43,7 @@ export async function fetchSpots() {
 export async function fetchSpotById(id) {
   const res = await fetch(`${API_BASE}/spots/${id}`, {
     headers: getAuthHeaders(),
+    cache: 'no-store',
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Gagal memuat detail spot');
