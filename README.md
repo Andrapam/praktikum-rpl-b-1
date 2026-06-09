@@ -5,10 +5,10 @@ Sebuah aplikasi web untuk membantu para pemancing _(angler)_ mencari, berbagi, d
 ## Anggota Kelompok
 | Nama                         | NIM       | Role  |
 |------------------------------|-----------|-------|
-| Andradhi Bondan Pamungkas    | L0124147  | Ketua |
-| Ataa Arkan Tsany             | L0124148  |       |
-| Imam Dian Firmansyah         | L0124150  |       |
-| Salman Abdussalam            | L0124156  |       |
+| Andradhi Bondan Pamungkas    | L0124147  | Ketua / BackEnd|
+| Ataa Arkan Tsany             | L0124148  |   BackEnd    |
+| Imam Dian Firmansyah         | L0124150  |    FrontEnd   |
+| Salman Abdussalam            | L0124156  |    QA   |
 
 ## Fitur Utama
 1. **Peta Interaktif** - Menampilkan spot mancing di peta OpenStreetMap (Leaflet)
