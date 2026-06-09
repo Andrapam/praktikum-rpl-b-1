@@ -10,10 +10,7 @@ import {
   MapPin,
   Star,
   Fish,
-  ChevronUp,
-  ChevronDown,
   X,
-  Locate,
   Filter,
 } from 'lucide-react';
 
@@ -81,7 +78,6 @@ export default function BerandaPage() {
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [activeFilter, setActiveFilter] = useState('Semua');
   const [searchQuery, setSearchQuery] = useState('');
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
   // Refs for auto-scrolling sidebar to selected card
@@ -145,15 +141,15 @@ export default function BerandaPage() {
   }
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-[#0a1018] flex flex-col">
+    <div className="h-[100dvh] w-screen overflow-hidden bg-[#0a1018] flex flex-col">
       {/* ═══════════════════════════════════════════════════════════════════════
           NAVBAR
        ═══════════════════════════════════════════════════════════════════════ */}
-      <nav className="relative z-[1000] w-full h-16 bg-[#0f1923] border-b border-[#1e3a5f]/50 flex items-center px-4 lg:px-6 gap-4 shrink-0">
+      <nav className="relative z-[1000] w-full h-14 sm:h-16 bg-[#0f1923] border-b border-[#1e3a5f]/50 flex items-center px-2.5 sm:px-4 lg:px-6 gap-2 sm:gap-4 shrink-0">
         {/* Logo */}
-        <Link href="/" className="flex min-w-[210px] items-center gap-3 shrink-0">
-          <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-white/5 ring-1 ring-white/10">
-            <img src="/logo.png" alt="FishPoint Logo" className="h-10 w-10 object-contain" />
+        <Link href="/" className="flex lg:min-w-[210px] items-center gap-3 shrink-0">
+          <div className="flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center overflow-hidden rounded-xl bg-white/5 ring-1 ring-white/10">
+            <img src="/logo.png" alt="FishPoint Logo" className="h-8 w-8 sm:h-10 sm:w-10 object-contain" />
           </div>
           <div className="hidden sm:block">
             <h1 className="text-white font-bold text-lg leading-tight">FishPoint</h1>
@@ -171,7 +167,7 @@ export default function BerandaPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder='Cari spot (ex: Rawa Pening)...'
+              placeholder='Cari spot...'
               aria-label="Cari spot"
               className="w-full bg-[#1a2332] border border-[#1e3a5f] rounded-xl py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500/60 transition-all"
               style={{ paddingLeft: '2.75rem', paddingRight: searchQuery ? '2.75rem' : '1rem' }}
@@ -236,7 +232,7 @@ export default function BerandaPage() {
       {/* ═══════════════════════════════════════════════════════════════════════
           MAIN CONTENT (below navbar)
        ═══════════════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 min-h-0 flex-col lg:flex-row overflow-hidden">
         {/* ═════════════════════════════════════════════════════════════════════
             SIDEBAR – Desktop
          ═════════════════════════════════════════════════════════════════════ */}
@@ -320,63 +316,30 @@ export default function BerandaPage() {
         {/* ═════════════════════════════════════════════════════════════════════
             MAP AREA
          ═════════════════════════════════════════════════════════════════════ */}
-        <main className="flex-1 relative h-full">
+        <main className="relative h-[42%] min-h-[210px] shrink-0 lg:h-full lg:min-h-0 lg:flex-1">
           <MapComponent
             spots={filteredSpots}
             selectedSpot={selectedSpot}
             onSpotSelect={handleSpotSelect}
           />
-
-          {/* ── Mobile: Toggle Sidebar Button ─────────────────────────────── */}
-          <button
-            onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
-            className="lg:hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-[1000] bg-[#0f1923] border border-[#1e3a5f] text-white rounded-full px-5 py-2.5 flex items-center gap-2 shadow-xl shadow-black/40 hover:bg-[#1a2332] transition-all"
-          >
-            <Fish className="w-4 h-4 text-emerald-400" />
-            <span className="text-sm font-medium">{filteredSpots.length} Spot</span>
-            {mobileDrawerOpen ? (
-              <ChevronDown className="w-4 h-4 text-gray-400" />
-            ) : (
-              <ChevronUp className="w-4 h-4 text-gray-400" />
-            )}
-          </button>
         </main>
-      </div>
 
-      {/* ═══════════════════════════════════════════════════════════════════════
-          MOBILE BOTTOM SHEET DRAWER
-       ═══════════════════════════════════════════════════════════════════════ */}
-      {/* Overlay */}
-      {mobileDrawerOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-[1001] transition-opacity"
-          onClick={() => setMobileDrawerOpen(false)}
-        />
-      )}
-      {/* Drawer */}
-      <div
-        className={`lg:hidden fixed bottom-0 left-0 right-0 z-[1002] bg-[#0f1923] border-t border-[#1e3a5f]/50 rounded-t-2xl transform transition-transform duration-300 ease-out ${
-          mobileDrawerOpen ? 'translate-y-0' : 'translate-y-full'
-        }`}
-        style={{ maxHeight: '70vh' }}
-      >
-        {/* Drawer Handle */}
-        <div className="flex justify-center py-3">
-          <div className="w-10 h-1 rounded-full bg-gray-600" />
-        </div>
-
-        {/* Filter Section */}
-        <div className="px-5 pb-3 border-b border-[#1e3a5f]/30">
-          <div className="flex items-center gap-2 mb-3">
+        {/* Mobile spot list is always visible below the map. */}
+        <section className="lg:hidden flex min-h-0 flex-1 flex-col bg-[#0f1923] border-t border-[#1e3a5f]/50">
+          <div className="shrink-0 px-3 py-2.5 border-b border-[#1e3a5f]/30">
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <div className="flex items-center gap-2">
             <Filter className="w-3.5 h-3.5 text-gray-400" />
             <h2 className="text-sm font-semibold text-gray-300">Filter Spot</h2>
+              </div>
+              <p className="text-xs text-gray-500">{filteredSpots.length} ditemukan</p>
           </div>
-          <div className="flex flex-wrap gap-2">
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
             {FILTER_OPTIONS.map((filter) => (
               <button
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
-                className={`rounded-lg px-3 py-1.5 text-xs font-medium cursor-pointer transition-all ${
+                  className={`shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium cursor-pointer transition-all ${
                   activeFilter === filter
                     ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20'
                     : 'bg-[#1a2332] text-gray-400 hover:bg-[#243447] border border-[#1e3a5f] hover:text-gray-200'
@@ -386,15 +349,11 @@ export default function BerandaPage() {
               </button>
             ))}
           </div>
-          <p className="text-xs text-gray-500 mt-3">
-            {filteredSpots.length} spot ditemukan
-          </p>
         </div>
 
-        {/* Spot List */}
-        <div className="overflow-y-auto" style={{ maxHeight: 'calc(70vh - 140px)' }}>
+          <div className="min-h-0 flex-1 overflow-y-auto scrollbar-thin">
           {filteredSpots.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 px-5 text-center">
+              <div className="flex flex-col items-center justify-center h-full px-5 text-center">
               <Fish className="w-8 h-8 text-gray-600 mb-3" />
               <p className="text-gray-400 text-sm">Tidak ada spot ditemukan</p>
             </div>
@@ -402,11 +361,9 @@ export default function BerandaPage() {
             filteredSpots.map((spot) => (
               <div
                 key={spot.id}
-                onClick={() => {
-                  handleSpotSelect(spot.id);
-                  setMobileDrawerOpen(false);
-                }}
-                className={`px-5 py-4 border-b border-[#1e3a5f]/30 cursor-pointer transition-all ${
+                  ref={(el) => (cardRefs.current[spot.id] = el)}
+                  onClick={() => handleSpotSelect(spot.id)}
+                  className={`px-4 py-3 border-b border-[#1e3a5f]/30 cursor-pointer transition-all ${
                   selectedSpot === spot.id
                     ? 'bg-emerald-600/10 border-l-2 border-l-emerald-500'
                     : 'hover:bg-[#1a2332]/50 border-l-2 border-l-transparent'
@@ -438,6 +395,7 @@ export default function BerandaPage() {
             ))
           )}
         </div>
+        </section>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════════════
@@ -456,6 +414,12 @@ export default function BerandaPage() {
         }
         .scrollbar-thin::-webkit-scrollbar-thumb:hover {
           background: rgba(30, 58, 95, 0.8);
+        }
+        .scrollbar-none::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-none {
+          scrollbar-width: none;
         }
       `}</style>
     </div>
