@@ -19,15 +19,4 @@ class SpotPhoto extends Model
         return $this->belongsTo(Spot::class, 'spotId');
     }
 
-    public function getImageUrlAttribute($value): ?string
-    {
-        if (!$value) {
-            return $value;
-        }
-
-        if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {
-            return $value;
-        }
-        return $value;
-    }
 }

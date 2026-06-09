@@ -30,7 +30,20 @@ const MapComponent = dynamic(() => import('@/components/MapView'), {
   ),
 });
 
-const FILTER_OPTIONS = ['Semua', 'Air Tawar', 'Air Laut', 'Sungai', 'Waduk'];
+const FILTER_OPTIONS = ['Semua', 'Air Tawar', 'Air Laut', 'Sungai', 'Waduk', 'Danau'];
+
+function matchesWaterType(type, filter) {
+  if (filter === 'Semua') return true;
+
+  const normalizedType = (type || '').toLowerCase();
+  const normalizedFilter = filter.toLowerCase();
+
+  if (normalizedFilter === 'air tawar') {
+    return normalizedType.startsWith('air tawar');
+  }
+
+  return normalizedType.includes(normalizedFilter);
+}
 
 // ── Helper: type badge colors ──────────────────────────────────────────────────
 function typeBadgeClass(type) {
@@ -109,7 +122,7 @@ export default function BerandaPage() {
   // Filtered spots
   const filteredSpots = useMemo(() => {
     return spots.filter((spot) => {
-      const matchFilter = activeFilter === 'Semua' || spot.type === activeFilter;
+      const matchFilter = matchesWaterType(spot.type, activeFilter);
       const matchSearch =
         !searchQuery ||
         spot.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -138,9 +151,9 @@ export default function BerandaPage() {
        ═══════════════════════════════════════════════════════════════════════ */}
       <nav className="relative z-[1000] w-full h-16 bg-[#0f1923] border-b border-[#1e3a5f]/50 flex items-center px-4 lg:px-6 gap-4 shrink-0">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 shrink-0">
-          <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
-            <Fish className="w-5 h-5 text-white" />
+        <Link href="/" className="flex min-w-[210px] items-center gap-3 shrink-0">
+          <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-white/5 ring-1 ring-white/10">
+            <img src="/logo.png" alt="FishPoint Logo" className="h-10 w-10 object-contain" />
           </div>
           <div className="hidden sm:block">
             <h1 className="text-white font-bold text-lg leading-tight">FishPoint</h1>
@@ -153,13 +166,15 @@ export default function BerandaPage() {
         {/* Search Bar */}
         <div className="flex-1 flex justify-center">
           <div className="relative w-full max-w-md">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <Search className="pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder='Cari spot (ex: Rawa Pening)...'
-              className="w-full bg-[#1a2332] border border-[#1e3a5f] rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500/60 transition-all"
+              aria-label="Cari spot"
+              className="w-full bg-[#1a2332] border border-[#1e3a5f] rounded-xl py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500/60 transition-all"
+              style={{ paddingLeft: '2.75rem', paddingRight: searchQuery ? '2.75rem' : '1rem' }}
             />
             {searchQuery && (
               <button
@@ -173,11 +188,11 @@ export default function BerandaPage() {
         </div>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           {currentUser ? (
             <Link
               href="/tambah-spot"
-              className="hidden sm:flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl px-4 py-2.5 font-medium text-sm transition-all hover:shadow-lg hover:shadow-emerald-500/20"
+              className="hidden sm:flex h-9 items-center gap-1.5 rounded-lg border border-emerald-400/20 bg-emerald-600 px-3 text-xs font-semibold text-white transition-all hover:bg-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20"
             >
               <Plus className="w-4 h-4" />
               <span>Tambah Spot</span>
@@ -185,7 +200,7 @@ export default function BerandaPage() {
           ) : (
             <Link
               href="/login"
-              className="hidden sm:flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl px-4 py-2.5 font-medium text-sm transition-all hover:shadow-lg hover:shadow-emerald-500/20"
+              className="hidden sm:flex h-9 items-center gap-1.5 rounded-lg border border-emerald-400/20 bg-emerald-600 px-3 text-xs font-semibold text-white transition-all hover:bg-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20"
             >
               <Plus className="w-4 h-4" />
               <span>Tambah Spot</span>
@@ -203,7 +218,7 @@ export default function BerandaPage() {
             <Link
               href="/profile"
               title={`Profil: ${currentUser.username}`}
-              className="w-9 h-9 rounded-full bg-emerald-700 text-white flex items-center justify-center font-semibold text-sm cursor-pointer hover:bg-emerald-600 transition-colors ring-2 ring-emerald-500/30 hover:ring-emerald-500"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-emerald-400/20 bg-[#163b35] text-xs font-bold text-emerald-300 transition-colors hover:bg-emerald-700 hover:text-white"
             >
               {currentUser.username.substring(0, 2).toUpperCase()}
             </Link>
