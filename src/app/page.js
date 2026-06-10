@@ -292,12 +292,12 @@ export default function BerandaPage() {
                     </span>
                     <span className="flex items-center gap-1 text-xs text-gray-500">
                       <MapPin className="w-3 h-3" />
-                      {spot.distance} km
+                      {spot.distance > 0 ? `${spot.distance} km` : '– km'}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <StarRating rating={spot.rating} />
-                    <span className="text-emerald-400 font-bold text-sm">{spot.rating}</span>
+                    <span className="text-emerald-400 font-bold text-sm">{spot.rating > 0 ? parseFloat(spot.rating).toFixed(1) : '0.0'}</span>
                     <span className="text-gray-500 text-xs">({spot.reviewCount} ulasan)</span>
                   </div>
                   {selectedSpot === spot.id && (
@@ -376,12 +376,12 @@ export default function BerandaPage() {
                   </span>
                   <span className="flex items-center gap-1 text-xs text-gray-500">
                     <MapPin className="w-3 h-3" />
-                    {spot.distance} km
+                    {spot.distance > 0 ? `${spot.distance} km` : '– km'}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <StarRating rating={spot.rating} />
-                  <span className="text-emerald-400 font-bold text-sm">{spot.rating}</span>
+                  <span className="text-emerald-400 font-bold text-sm">{spot.rating > 0 ? parseFloat(spot.rating).toFixed(1) : '0.0'}</span>
                   <span className="text-gray-500 text-xs">({spot.reviewCount} ulasan)</span>
                 </div>
                 {selectedSpot === spot.id && (
