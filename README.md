@@ -3,10 +3,10 @@
 Sebuah aplikasi web untuk membantu para pemancing _(angler)_ mencari, berbagi, dan menilai spot memancing sesuai kebutuhan mereka.
 
 ## 📸 Screenshots / Demo
-Video DEMO = https://www.youtube.com/watch?v=M_xqh8YAemM
-Link Document Project = https://github.com/Andrapam/praktikum-rpl-b-1/tree/dev/Link%20Document%20Project
-Link ChangeLog = https://github.com/Andrapam/praktikum-rpl-b-1/blob/dev/CHANGELOG.md
-Slide Presentasi Demo = https://github.com/Andrapam/praktikum-rpl-b-1/blob/dev/Link%20Document%20Project/Kelompok%201_Slide%20Presentasi_B_.pdf
+1. Video DEMO = https://www.youtube.com/watch?v=M_xqh8YAemM
+2. Link Document Project = https://github.com/Andrapam/praktikum-rpl-b-1/tree/dev/Link%20Document%20Project
+3. Link ChangeLog = https://github.com/Andrapam/praktikum-rpl-b-1/blob/dev/CHANGELOG.md
+4. Slide Presentasi Demo = https://github.com/Andrapam/praktikum-rpl-b-1/blob/dev/Link%20Document%20Project/Kelompok%201_Slide%20Presentasi_B_.pdf
 
 <img width="1858" height="842" alt="Screenshot 2026-06-09 165805" src="https://github.com/user-attachments/assets/71c25b16-ff0b-4205-b4be-d4d03251259b" />
 <img width="1861" height="831" alt="Screenshot 2026-06-09 165824" src="https://github.com/user-attachments/assets/060fe355-3532-4f1f-a098-1ef5e92ff523" />
