@@ -3,10 +3,6 @@
 Sebuah aplikasi web untuk membantu para pemancing _(angler)_ mencari, berbagi, dan menilai spot memancing sesuai kebutuhan mereka.
 
 ## 📸 Screenshots / Demo
-*(Silakan ganti URL gambar di bawah dengan screenshot asli atau GIF demo aplikasi Anda)*
-![Home Page Placeholder](https://via.placeholder.com/800x400.png?text=Screenshot+Beranda+FishPoint)
-![Admin Dashboard Placeholder](https://via.placeholder.com/800x400.png?text=Screenshot+Admin+Dashboard)
-
 ## Anggota Kelompok
 | Nama                         | NIM       | Role  |
 |------------------------------|-----------|-------|
