@@ -95,13 +95,20 @@ class BusinessLogicTest extends TestCase
 
         // Act
         $teksHasil = $helper->censorBadWords($teksAsli);
+        
+        // Edge Case Act
+        $teksKosong = $helper->censorBadWords(''); 
 
         // Assert
+        // --- Happy Case Assertions ---
         $this->assertStringNotContainsStringIgnoringCase('bego', $teksHasil, 'Kata "bego" seharusnya sudah disensor.');
         $this->assertStringNotContainsStringIgnoringCase('tolol', $teksHasil, 'Kata "tolol" seharusnya sudah disensor.');
         $this->assertStringContainsString('****', $teksHasil, 'Sensor seharusnya menghasilkan tanda bintang.');
         $this->assertStringContainsString('*****', $teksHasil, 'Sensor "tolol" (5 karakter) seharusnya menghasilkan 5 bintang.');
         $this->assertStringContainsString('Tempat ini sangat bagus', $teksHasil, 'Kata-kata bersih tidak boleh ikut tersensor.');
+        
+        // --- Edge Case Assertion ---
+        $this->assertEquals('', $teksKosong, 'String kosong harus dikembalikan apa adanya.');
     }
 
     // =========================================================================
